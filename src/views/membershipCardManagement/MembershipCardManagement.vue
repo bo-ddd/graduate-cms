@@ -29,11 +29,7 @@ const tableData = [
             <div>
                 <h4>查询条件:</h4>
             </div>
-            <div class="ml-15">用户名称:</div>
-            <div>
-                <el-input placeholder="Please input" />
-            </div>
-            <div>求职状态</div>
+            <div>会员卡名称</div>
             <div>
                 <el-select class="m-2" placeholder="Select" size="large">
                     <el-option v-for="item in 5" :key="item" :label="item" :value="item" />

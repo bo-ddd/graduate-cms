@@ -33,7 +33,7 @@ const tableData = [
             <div>
                 <el-input placeholder="Please input" />
             </div>
-            <div>求职状态</div>
+            <div>用户状态</div>
             <div>
                 <el-select class="m-2" placeholder="Select" size="large">
                     <el-option v-for="item in 5" :key="item" :label="item" :value="item" />
