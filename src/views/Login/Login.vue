@@ -24,6 +24,11 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router';
+let router = useRouter();
+let nav = (name: string) => {
+    router.push(name);
+}
 // Form 是form表单的类型
 interface Form {
     username: string,
@@ -70,6 +75,7 @@ const submit = function () {
     })
     if (res.type == 'success') {
         console.log(form);
+        nav('/userAdmin');
     }
 };
 </script>
