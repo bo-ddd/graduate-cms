@@ -24,30 +24,35 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { ElMessage } from 'element-plus'
-
+// Form 是form表单的类型
 interface Form {
     username: string,
     password: string,
 };
+// form 是 登录的form表单绑定的参数
 const form: Form = reactive({
     username: '',
     password: '',
 });
+// MessageProps 是提示信息的数据的类型
 interface MessageProps {
     message: string,
     type: "warning" | "success" | "info" | "error"
 }
+// formCheck 校验方法
 const formCheck = function (form: Form) {
     let res: MessageProps = {
         message: '',
         type: 'warning'
     }
     for (const key in form) {
-        if (form[key as keyof typeof form].length < 6) {
-            res.message = `${key}的长度不能小于6位数!`;
-            return res;
-        } else if (form[key as keyof typeof form] == '' || form[key as keyof typeof form] == undefined) {
+        if (form[key as keyof typeof form] == '' || form[key as keyof typeof form] == undefined) {
+            res.type = 'warning';
             res.message = `${key}不能为空!`;
+            return res;
+        } else if (form[key as keyof typeof form].length < 6) {
+            res.type = 'warning';
+            res.message = `${key}的长度不能小于6位数!`;
             return res;
         } else {
             res.type = 'success';
@@ -56,14 +61,16 @@ const formCheck = function (form: Form) {
     }
     return res;
 }
-
+// submit 点击登录按钮的方法
 const submit = function () {
     let res = formCheck(form);
     ElMessage({
         type: res.type,
         message: res.message
     })
-    console.log(form);
+    if (res.type == 'success') {
+        console.log(form);
+    }
 };
 </script>
 
@@ -81,12 +88,12 @@ const submit = function () {
     color: #409EFF;
 }
 
-.login {
-    width: 100vw;
-    height: 100vh;
-    background-image: url('@/assets/imanges/5.png');
-    background-repeat: no-repeat;
-    background-size: cover;
+:deep(.el-input__wrapper.is-focus) {
+    box-shadow: none;
+}
+
+:deep(.el-input) {
+    --el-input-hover-border-color: none;
 }
 
 :deep(.el-input__inner) {
@@ -110,6 +117,14 @@ const submit = function () {
 
 :deep(.el-form-item label) {
     font-size: 14px;
+}
+
+.login {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('@/assets/imanges/5.png');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .form {
