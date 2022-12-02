@@ -5,13 +5,13 @@
                 <div class="form_title">登录</div>
                 <div class="form_input">
                     <el-form-item label="USERNAME">
-                        <el-input type="text" v-model="form.username" />
+                        <el-input v-model="form.username" placeholder="请输入用户名" maxlength="15" type="text" />
                     </el-form-item>
                     <el-form-item label="PASSWORD">
-                        <el-input type="password" v-model="form.password" />
+                        <el-input v-model="form.password" placeholder="请输入密码" maxlength="15" type="password" />
                     </el-form-item>
                 </div>
-    
+
                 <div class="form_submit">
                     <el-button type="primary" @click="submit">登录</el-button>
                     <el-button>注册</el-button>
@@ -23,39 +23,116 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router';
+let router = useRouter();
+let nav = (name: string) => {
+    router.push(name);
+}
+// Form 是form表单的类型
 interface Form {
     username: string,
     password: string,
 };
+// form 是 登录的form表单绑定的参数
 const form: Form = reactive({
     username: '',
     password: '',
 });
+// MessageProps 是提示信息的数据的类型
+interface MessageProps {
+    message: string,
+    type: "warning" | "success" | "info" | "error"
+}
+// formCheck 校验方法
+const formCheck = function (form: Form) {
+    let res: MessageProps = {
+        message: '',
+        type: 'warning'
+    }
+    for (const key in form) {
+        if (form[key as keyof typeof form] == '' || form[key as keyof typeof form] == undefined) {
+            res.type = 'warning';
+            res.message = `${key}不能为空!`;
+            return res;
+        } else if (form[key as keyof typeof form].length < 6) {
+            res.type = 'warning';
+            res.message = `${key}的长度不能小于6位数!`;
+            return res;
+        } else {
+            res.type = 'success';
+            res.message = '登录成功';
+        }
+    }
+    return res;
+}
+// submit 点击登录按钮的方法
 const submit = function () {
-    console.log(form);
+    let res = formCheck(form);
+    ElMessage({
+        type: res.type,
+        message: res.message
+    })
+    if (res.type == 'success') {
+        console.log(form);
+        nav('/userAdmin');
+    }
 };
 </script>
 
 <style scoped lang="scss">
 :deep(.el-form) {
-    padding: 18px 30PX;
+    padding: 30px 50PX;
     border: 1px solid var(--el-border-color);
     color: #409EFF;
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, .6);
+    border-radius: 5px;
+    box-shadow: 0px 0px 100px 0PX rgb(157, 155, 155);
 }
-:deep(.el-form-item__label){
+
+:deep(.el-form-item__label) {
     color: #409EFF;
 }
-.login{
+
+:deep(.el-input__wrapper.is-focus) {
+    box-shadow: none;
+}
+
+:deep(.el-input) {
+    --el-input-hover-border-color: none;
+}
+
+:deep(.el-input__inner) {
+    color: #409EFF !important;
+    outline: none !important;
+    border: none;
+}
+
+:deep(.el-input__wrapper) {
+    box-shadow: 0 0 0 0px var(--el-input-border-color, var(--el-border-color)) inset;
+    cursor: default;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    padding: 0 10px;
+    border-bottom: 1px solid #409EFF;
+
+    .el-input__inner {
+        cursor: default !important;
+    }
+}
+
+:deep(.el-form-item label) {
+    font-size: 14px;
+}
+
+.login {
     width: 100vw;
     height: 100vh;
     background-image: url('@/assets/imanges/5.png');
     background-repeat: no-repeat;
-    background-size:cover;
+    background-size: cover;
 }
-:deep(.el-input){
-    background-color: red;
-}
+
 .form {
     width: 100vw;
     height: 100vh;
@@ -63,9 +140,11 @@ const submit = function () {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+
     .form_title {
         text-align: center;
-        margin-bottom: 18px;
+        font-size: 20px;
+        margin-bottom: 25px;
     }
 
     .form_submit {
@@ -73,7 +152,8 @@ const submit = function () {
         display: flex;
         align-items: center;
         justify-content: center;
-        .el-button{
+
+        .el-button {
             width: 35%;
         }
     }
