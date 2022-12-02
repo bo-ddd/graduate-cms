@@ -22,53 +22,51 @@
 </template>
 
 <script setup lang="ts">
+// 引入
 import { reactive } from 'vue';
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router';
+import type UserInfo from '@/type/UserInfo'
+
+// 声明变量
 let router = useRouter();
-let nav = (name: string) => {
-    router.push(name);
-}
-// Form 是form表单的类型
-interface Form {
-    username: string,
-    password: string,
-};
-// form 是 登录的form表单绑定的参数
-const form: Form = reactive({
-    username: '',
-    password: '',
-});
+
+// 登录的form表单绑定的参数
+const form = reactive({
+    // username: '',
+    // password: '',
+}) as UserInfo;
+
 // MessageProps 是提示信息的数据的类型
 interface MessageProps {
     message: string,
     type: "warning" | "success" | "info" | "error"
 }
+
+// 方法
 // formCheck 校验方法
-const formCheck = function (form: Form) {
+const formCheck = function (form: UserInfo) {
     let res: MessageProps = {
         message: '',
         type: 'warning'
     }
-    for (const key in form) {
-        if (form[key as keyof typeof form] == '' || form[key as keyof typeof form] == undefined) {
-            res.type = 'warning';
-            res.message = `${key}不能为空!`;
-            return res;
-        } else if (form[key as keyof typeof form].length < 6) {
-            res.type = 'warning';
-            res.message = `${key}的长度不能小于6位数!`;
-            return res;
-        } else {
-            res.type = 'success';
-            res.message = '登录成功';
-        }
+    if (form.username == '' || form.username == undefined || form.username.length < 6 || form.username.length > 10) {
+        res.type = 'warning';
+        res.message = `用户名有问题!`;
+        return res;
+    } else if (form.password == "" || form.password == undefined || form.password.length < 6 || form.password.length > 10) { 
+        res.type = 'warning';
+        res.message = `密码有问题!`;
+        return res;
     }
     return res;
 }
+
 // submit 点击登录按钮的方法
 const submit = function () {
     let res = formCheck(form);
+    console.log('---------res--------------')
+    console.log(res)
     ElMessage({
         type: res.type,
         message: res.message
@@ -78,6 +76,11 @@ const submit = function () {
         nav('/userAdmin');
     }
 };
+
+// 跳转页面的方法
+const nav = (name: string) => {
+    router.push(name);
+}
 </script>
 
 <style scoped lang="scss">
