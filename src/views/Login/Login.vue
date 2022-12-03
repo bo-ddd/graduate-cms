@@ -1,17 +1,22 @@
 <template>
     <div class="login">
-        <div class="form">
+        <div class="form flex-ja-center">
             <el-form :model="form" label-width="100px">
                 <div class="form_title">登录</div>
                 <div class="form_input">
                     <div class="mt-15 flex-ja-center">
-                        <span>USERNAME</span>
+                        <span class="mr-10">USERNAME</span>
                         <el-input v-model="form.username" placeholder="请输入用户名" maxlength="20" type="text" />
                     </div>
                     <div class="mt-15 flex-ja-center">
-                        <span>USERNAME</span>
+                        <span class="mr-10">USERNAME</span>
                         <el-input v-model="form.password" placeholder="请输入密码" maxlength="20" type="password" />
                     </div>
+                </div>
+
+                <div class="nav mt-15 flex">
+                    <div class="cursor-p">忘记密码</div>
+                    <div class="cursor-p" @click="nav('/register')">注册</div>
                 </div>
 
                 <div class="form_submit mt-15">
@@ -25,20 +30,20 @@
 <script setup lang="ts">
 // 引入
 import { reactive } from 'vue';
-import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
-import type UserInfo from '@/type/UserInfo'
-import type MessageProps from '@/type/ElMessage'
+import type UserLogin from '@/type/UserLogin';
+import type MessageProps from '@/type/ElMessage';
 
 // 声明变量
 let router = useRouter();
 
 // 登录的form表单绑定的参数
-const form = reactive({}) as UserInfo;
+const form = reactive({}) as UserLogin;
 
 // 方法
 // formCheck 校验方法
-const formCheck = function (form: UserInfo) {
+const formCheck = function (form: UserLogin) {
     let res: MessageProps = {
         message: '',
         type: 'warning'
@@ -85,7 +90,6 @@ const nav = (name: string) => {
 <style scoped lang="scss">
 :deep(.el-form) {
     padding: 30px;
-    border: 1px solid var(--el-border-color);
     color: #0080ff;
     background-color: rgba(255, 255, 255, .6);
     border-radius: 5px;
@@ -105,22 +109,20 @@ const nav = (name: string) => {
 }
 
 :deep(.el-input__inner) {
-    color: #409EFF !important;
-    outline: none !important;
-    border: none;
+    color: #409EFF;
+}
+
+:deep(.el-input__inner::placeholder) {
+    color: #409EFF;
 }
 
 :deep(.el-input__wrapper) {
     box-shadow: 0 0 0 0px var(--el-input-border-color, var(--el-border-color)) inset;
-    cursor: default;
+    // cursor: default;
     border-radius: 0;
     background-color: rgba(0, 0, 0, 0);
     padding: 0 10px;
     border-bottom: 1px solid #409EFF;
-
-    .el-input__inner {
-        cursor: default !important;
-    }
 }
 
 :deep(.el-form-item label) {
@@ -138,14 +140,15 @@ const nav = (name: string) => {
 .form {
     width: 100vw;
     height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-
     .form_title {
         text-align: center;
         font-size: 20px;
+    }
+
+    .nav {
+        width: 100%;
+        font-size: 12px;
+        justify-content: space-between;
     }
 
     .form_submit {
