@@ -8,6 +8,6 @@ interface Res{
     }
 export default{
     getMemberCardList: (params:any):Promise<Res> => {
-        return axios.post<Res,any>('/system/selectVipCard', params, postConfig)
+        return axios.post('/system/selectVipCard', params, postConfig)
     },
 }
