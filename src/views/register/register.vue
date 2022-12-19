@@ -11,7 +11,7 @@
 
             <div class="flex mt-20">
                 <div class="label">用户密码：</div>
-                <el-input class="w-300" v-model="form.password" placeholder="请输入密码" />
+                <el-input class="w-300" type="password" v-model="form.password" placeholder="请输入密码" />
             </div>
 
             <div class="flex mt-20">
@@ -21,11 +21,11 @@
 
             <div class="flex mt-20">
                 <div class="label">二维码：</div>
-                <el-button @click="(isQrCode = true)">生成二维码</el-button>
+                <el-button @click="(isQrCode = true)" class="c-8d9ea7 el_button">生成二维码</el-button>
             </div>
 
             <div v-if="isQrCode" class="qr-code mt-20 flex-ja-center">
-                <img src="@/assets/imanges/u21.png" alt="">
+                <img src="@/assets/images/u21.png" alt="">
             </div>
 
             <div class="flex-space-around mt-20">
@@ -59,11 +59,16 @@ const submit = function () {
     border-radius: 0;
     background-color: rgba(188, 60, 60, 0);
     padding: 0 10px;
-    border-bottom: 1px solid #409EFF;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.39);
+    // color: rgb(201, 27, 27);
+}
+
+:deep(.el-input__inner) {
+    color: #fff;
 }
 
 :deep(.el-input__inner::placeholder) {
-    color: #409EFF;
+    color: rgba(255, 255, 255, 0.575);
 }
 
 .w-300 {
@@ -74,14 +79,29 @@ const submit = function () {
     box-sizing: border-box;
 }
 
-.border-bottom {
-    border-bottom: 1px solid #409EFF;
+.el_button {
+    width: 46%;
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0) !important;
+    border: 1px solid #fff;
+    color: var(--el-color);
+}
+
+.el_button:hover {
+    border: 0;
+    color: #409EFF;
+    border: 1px solid #409EFF;
+    background-color: #409EFF;
+}
+
+.el_button:active {
+    color: rgba(255, 255, 255, 0.569);
 }
 
 .register {
     width: 100vw;
     height: 100vh;
-    background-image: url('@/assets/imanges/55.png');
+    background-image: url('@/assets/images/register-bgd.png');
     background-repeat: no-repeat;
     background-size: cover;
 
@@ -89,9 +109,8 @@ const submit = function () {
         padding: 30px;
         width: 400px;
         border-radius: 10px;
-        background-color: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 0 100px 100px rgba(255, 255, 255, 0.8);
-        color: #409EFF;
+        border: 1px solid #fff;
+        color: #fff;
 
         .title {
             width: 100%;
@@ -121,24 +140,6 @@ const submit = function () {
         .flex-space-around {
             display: flex;
             justify-content: space-around;
-        }
-
-        .el_button {
-            width: 46%;
-            margin: 0;
-            background-color: rgba(255, 255, 255, 0);
-            border: 1px solid #409EFF;
-            color: var(--el-color);
-        }
-
-        .el_button:hover {
-            border: 0;
-            color: #fff;
-            background-color: #409EFF;
-        }
-
-        .el_button:active {
-            color: rgba(255, 255, 255, 0.8);
         }
     }
 }
