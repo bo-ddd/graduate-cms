@@ -5,6 +5,15 @@ export const useCompany = defineStore('company', () => {
     function getSelectCompany(params: any) {
         return Api.getSelectCompanyList(params) as any
     }
+    
+    function getSelectCompanyResume(params: any) {
+        return Api.getSelectCompanyResumeList(params) as any
+    }
 
-    return { getSelectCompany }
+    function getCompanyNature(params: any) {
+        return Api.getCompanyNatureList(params) as any
+    }
+
+
+    return { getSelectCompany, getSelectCompanyResume, getCompanyNature, }
 })

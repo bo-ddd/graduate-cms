@@ -5,6 +5,14 @@ import { ref } from 'vue';
 
 const companyStore = useCompany();
 
+// 企业性质
+let nature = ref([]);
+
+
+
+
+
+// 表格
 let tableData = ref()
 const getSelectCompanyList = async () => {
     let res = await companyStore.getSelectCompany({
@@ -42,7 +50,18 @@ const getSelectCompanyList = async () => {
 }
 getSelectCompanyList();
 
-
+//简历管理
+let resume = ref(false);
+const isShowResume = function (companyId:number) {
+    resume.value = true;
+    getSelectCompanyResumeList(companyId)
+}
+const getSelectCompanyResumeList = async (companyId:number  ) => {
+    let res = await companyStore.getSelectCompanyResume({
+        companyId:companyId
+    });
+    console.log(res)
+}
 
 </script>
 
@@ -104,14 +123,15 @@ getSelectCompanyList();
             <el-table-column prop="companyId" label="企业id" align="center" />
             <el-table-column prop="companyFullName" label="企业名称" align="center" />
             <el-table-column prop="companyName" label="品牌名称" align="center" />
-            <el-table-column prop="address" label="简历管理" align="center">
+            <el-table-column label="简历管理" align="center">
                 <template #default="scope">
                     <!-- {{ scope.row.index }} -->
-                    <el-button type="danger" text class="btn-xq">详情</el-button>
+                    <el-button type="danger" @click="isShowResume(scope.row.companyId)" text class="btn-xq">详情</el-button>
                 </template>
             </el-table-column>
+
             <el-table-column prop="companyIndustry" label="所属行业" align="center" />
-            <el-table-column prop="address" label="发布职位" align="center">
+            <el-table-column label="发布职位" align="center">
                 <template #default="scope">
                     <!-- {{ scope.row.index }} -->
                     <el-button type="danger" text class="btn-xq">详情</el-button>
@@ -119,19 +139,25 @@ getSelectCompanyList();
             </el-table-column>
             <el-table-column prop="vipLevel" label="会员等级" align="center" />
             <el-table-column prop="companyRegisterAddr" label="注册地区" align="center" />
-            <el-table-column prop="address" label="邀请人才" align="center">
-                 <template #default="scope">
+            <el-table-column label="邀请人才" align="center">
+                <template #default="scope">
                     <!-- {{ scope.row.index }} -->
                     <el-button type="danger" text class="btn-xq">详情</el-button>
                 </template>
             </el-table-column>
-            <el-table-column prop="address" label="企业详情" align="center">
-                 <template #default="scope">
+            <el-table-column label="企业详情" align="center">
+                <template #default="scope">
                     <!-- {{ scope.row.index }} -->
                     <el-button type="danger" text class="btn-xq">详情</el-button>
                 </template>
             </el-table-column>
         </el-table>
+
+        <!-- 简历管理 -->
+        <el-dialog v-model="resume" width="30%" align-center>
+
+        </el-dialog>
+
         <el-pagination class="mt-10" :page-sizes="[100, 200, 300, 400]" layout="total, sizes, prev, pager, next, jumper"
             :total="400" />
     </div>
