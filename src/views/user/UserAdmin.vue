@@ -288,9 +288,7 @@ const selectUserOpinion = async (userId: number) => {
         }
 
         .cord-box {
-            border-bottom: 1px solid rgb(247, 247, 247);
-            border-top: 5px solid rgb(247, 247, 247);
-
+            border-bottom: 5px solid rgb(247, 247, 247);
             .header {
                 display: flex;
                 justify-content: space-between;
@@ -305,7 +303,7 @@ const selectUserOpinion = async (userId: number) => {
             .count {
                 display: flex;
                 justify-content: space-between;
-                padding: 0 10px;
+                padding:5px 10px;
 
                 .count-gs {
                     display: flex;

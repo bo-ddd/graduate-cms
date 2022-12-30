@@ -1,34 +1,49 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
-const tableData = [
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-]
-let company = reactive<{
-    companyName:string;
-    level:number | string;
-}>({
-    companyName:'',
-    level:'',
-})
+import { reactive,ref ,type Ref} from "vue";
+import { useMemberShipManage } from "@/stores/membershipManagement";
+import type { SelectVip } from "@/type/User";
+let memberShipStore = useMemberShipManage();//接口的仓库
+
+let company = reactive<SelectVip>({
+    pageSize:10,
+    pageIndex:1,
+    companyName:null,
+    vipLevel:null,
+}) as SelectVip;
+let vipList:Ref<Array<{
+    vipLevel:number,
+    vipName:string,
+}>> = ref([]);
+let tableData = ref([]) as Ref<Object[]>;
+
+// 获取用户列表的方法
+const getUserList = async ()=>{
+    let obj : SelectVip = {} as SelectVip;
+    let key: keyof SelectVip;
+    for (key in company) {
+      if(company[key]){
+        obj[key] = company[key];
+      }
+    }
+    console.log(obj);
+    let res = await memberShipStore.getUserList(obj);
+    if(res.code == 200){
+        tableData.value = res.data;
+        console.log(res);
+    }
+}
+getUserList();
+// 获取vip列表的方法
+const getVip = async ()=>{
+    let res = await memberShipStore.getVip();
+    if(res.code == 200){
+        vipList.value = res.data;
+        console.log(res);
+    }
+}
+getVip();
+
+
 </script>
 
 <template>
@@ -43,16 +58,16 @@ let company = reactive<{
             </div>
             <div>会员等级</div>
             <div>
-                <el-select class="m-2" v-model="company.level" size="large">
-                    <el-option v-for="item in 5" :key="item" :label="item" :value="item" />
+                <el-select class="m-2" v-model="company.vipLevel" size="large" placeholder="请选择会员等级">
+                    <el-option v-for="item in vipList" :key="item.vipLevel" :label="item.vipName" :value="item.vipLevel" />
                 </el-select>
             </div>
             <div>
-                <el-button class="find-btn" type="primary">查询</el-button>
+                <el-button class="find-btn" type="primary" @click="getUserList">查询</el-button>
             </div>
         </div>
 
-        <el-table :data="tableData" style="width: 100%" fit="true" table-layout="auto" :cell-style="{'text-align':'center'}" :header-cell-style="{'text-align':'center'}">
+        <el-table :data="tableData"   table-layout="auto" :cell-style="{'text-align':'center'}" :header-cell-style="{'text-align':'center'}">
             <el-table-column prop="date" label="序号"  />
             <el-table-column prop="name" label="公司id" />
             <el-table-column prop="address" label="公司名称" />
