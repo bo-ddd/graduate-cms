@@ -1,37 +1,39 @@
 <template>
     <div class="register flex-ja-center">
         <div class="form">
-            <div class="title flex-ja-center">
-                <div class="title_text">用户注册</div>
-            </div>
-            <div class="flex mt-40">
-                <div class="label">用户名称：</div>
-                <el-input class="w-300" v-model="form.username" placeholder="请输入用户名" />
-            </div>
+            <form action="">
+                <div class="title flex-ja-center">
+                    <div class="title_text">用户注册</div>
+                </div>
+                <div class="flex mt-40">
+                    <div class="label">用户名称：</div>
+                    <el-input class="w-300" v-model="form.username" placeholder="请输入用户名" />
+                </div>
 
-            <div class="flex mt-20">
-                <div class="label">用户密码：</div>
-                <el-input class="w-300" type="password" v-model="form.password" placeholder="请输入密码" />
-            </div>
+                <div class="flex mt-20">
+                    <div class="label">用户密码：</div>
+                    <el-input class="w-300" type="password" v-model="form.password" placeholder="请输入密码" />
+                </div>
 
-            <div class="flex mt-20">
-                <div class="label">手机号：</div>
-                <el-input class="w-300" v-model="form.phone" placeholder="请输入手机号" />
-            </div>
+                <div class="flex mt-20">
+                    <div class="label">手机号：</div>
+                    <el-input class="w-300" v-model="form.phone" placeholder="请输入手机号" />
+                </div>
 
-            <div class="flex mt-20">
-                <div class="label">二维码：</div>
-                <el-button @click="(isQrCode = true)" class="c-8d9ea7 el_button">生成二维码</el-button>
-            </div>
+                <div class="flex mt-20">
+                    <div class="label">二维码：</div>
+                    <el-button @click="(isQrCode = true)" class="c-8d9ea7 el_button">生成二维码</el-button>
+                </div>
 
-            <div v-if="isQrCode" class="qr-code mt-20 flex-ja-center">
-                <img src="@/assets/images/u21.png" alt="">
-            </div>
+                <div v-if="isQrCode" class="qr-code mt-20 flex-ja-center">
+                    <img src="@/assets/images/u21.png" alt="">
+                </div>
 
-            <div class="flex-space-around mt-20">
-                <el-button class="el_button">取消</el-button>
-                <el-button @click="submit" class="el_button" type="primary">注册</el-button>
-            </div>
+                <div class="flex-space-around mt-20">
+                    <el-button class="el_button">取消</el-button>
+                    <el-button @click="submit" class="el_button" type="primary">注册</el-button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -42,7 +44,9 @@ import { reactive, ref } from 'vue';
 import type UserRegister from '@/type/UserRegister'
 
 // 登录的form表单绑定的参数
-const form = reactive({}) as UserRegister;
+const form = reactive({
+    password: ''
+}) as UserRegister;
 // isQrCode 是控制二维码这个表情是否创建的
 let isQrCode = ref(false);
 
