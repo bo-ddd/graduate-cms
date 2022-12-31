@@ -5,7 +5,7 @@ import { postConfig, getConfig } from './config'
 interface ApiRes {
   code: number,
   msg: string,
-  data: any
+  data: any,
 }
 
 interface UserListParams {

@@ -3,19 +3,28 @@ import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
 let userStore = useUserStore();
 
-
+let userName = ref();
+let stagelSelect = ref();
 /**
  * 查询用户列表
  */
-let tableData = ref()
-const getUserList = async () => {
+let pageSize = ref(10);
+let totalCount = ref();
+let tableData = ref();
+let current = ref(1);
+const getUserList = async (value?:number) => {
+    console.log(value);
+    
     let res = await userStore.getSelectUser({
-        pageIndex: 1,
-        pageSize: 10,
+        pageIndex: current.value,
+        pageSize:pageSize.value,
+        userName:userName.value,
+        userStatus:stagelSelect.value
 
     });
     if (res.code == 200) {
         tableData.value = res.data.data;
+        totalCount.value = res.data.maxCount;
     }
 }
 getUserList();
@@ -29,16 +38,26 @@ getUserList();
  */
 let interviewDialog = ref(false);
 let interviewList = ref();
+let isInterK = ref(false);
 const interviewFn = async (userId:number) => {
+
     interviewDialog.value = true;
     let res = await userStore.selectUserInterview({
         userId
     })
    if(res.code){
     interviewList.value = res.data;
+    console.log(interviewList.value.length);
+
+    if(interviewList.value.length){
+        isInterK.value = false;
+    }else{
+        isInterK.value = true;
+    }
+
    }
 }
-
+             
 /***
  * 
  * 投递记录
@@ -103,8 +122,8 @@ const userStarFn = async (name?: string) => {
     if (name) { collectionName.value = name!; }
     bool.value = collectionName.value == "职位" ? false : true;
     let res = await userStore.selectUserStar({
-        pageIndex: 1,
-        pageSize: 10,
+        pageIndex: current.value,
+        pageSize:pageSize.value,
         bool: bool.value,
         userId: Number(collUserId.value)
     })
@@ -163,16 +182,16 @@ const selectUserOpinion = async (userId: number) => {
             </div>
             <div class="ml-15">用户名称:</div>
             <div>
-                <el-input placeholder="Please input" />
+                <el-input placeholder="请输入用户名称" v-model="userName" />
             </div>
             <div>求职状态</div>
             <div>
-                <el-select class="m-2" placeholder="Select" size="large">
-                    <el-option v-for="item in 5" :key="item" :label="item" :value="item" />
+                <el-select class="m-2" v-model="stagelSelect" placeholder="请选择求职状态" size="large">
+                    <el-option v-for="item in stagel" :key="item" :label="item.label" :value="item.value" />
                 </el-select>
             </div>
             <div>
-                <el-button class="find-btn" type="primary">查询</el-button>
+                <el-button class="find-btn" type="primary" @click="getUserList()">查询</el-button>
             </div>
         </div>
 
@@ -214,8 +233,8 @@ const selectUserOpinion = async (userId: number) => {
                 <el-table-column prop="registerTime" label="注册时间" width="160px" />
                 <el-table-column prop="lastLoginTime" label="最近登录时间" width="160px" />
             </el-table>
-            <el-pagination class="mt-10" :page-sizes="[100, 200, 300, 400]"
-                layout="total, sizes, prev, pager, next, jumper" :total="400" />
+            <el-pagination class="mt-10" @current-change="getUserList" @size-change="getUserList"   v-model:page-size="pageSize" v-model:current-page="current" :page-sizes="[10, 50, 100, 500]"
+                layout="total, sizes, prev, pager, next, jumper" :total="totalCount" />
         </div>
 
 
@@ -248,6 +267,7 @@ const selectUserOpinion = async (userId: number) => {
         <!-- 面试 -->
         <el-dialog v-model="interviewDialog" width="50%" align-center  style="height: 500px;overflow: auto;"    >
             <div class="inter">
+                <el-empty v-if="isInterK" description="没有数据"  class="empty" />
         <div v-for="item in interviewList" :key="item.companyId">
             <div>
                 <div class="date_time flex">
@@ -348,6 +368,10 @@ const selectUserOpinion = async (userId: number) => {
     border-radius: 6px;
     text-align: center;
     background-color: rgb(243, 243, 243);
+}
+
+.empty{
+  height: 55vh;
 }
 
 .inter {
