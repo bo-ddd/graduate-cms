@@ -53,7 +53,7 @@ const getCompanyIndustryList = async () => {
     const res: Res = await companyStore.getCompanyIndustry({});
     if (res.code == 200) {
         companyIndustry.value = companyIndustry.value.concat(res.data);
-    }
+    }  
 }
 getCompanyIndustryList();
 
