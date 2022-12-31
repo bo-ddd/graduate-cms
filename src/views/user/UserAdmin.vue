@@ -39,16 +39,56 @@ const interviewFn = () => {
  */
 
 let deliveryDialog = ref(false);
-const deliveryFn = () => {
+const deliveryFn = async (id?: number) => {
     deliveryDialog.value = true;
+    console.log(id);
+    let res = await userStore.selectUserDelivery({
+        deliveryStatus: <number>id || 0
+    });
+    if (res.code == 200) {
+        console.log(res);
+    }
 }
+
+/****
+ * 应聘阶段下拉框
+ * 
+ */
+let stagel = ref();
+const getStageL = async () => {
+    let res = await userStore.getStageL({});
+    if (res.code == 200) {
+        stagel.value = res.data;
+    }
+}
+getStageL();
 
 /***
  * 收藏
  */
+let collectionName = ref("企业");
 let collectionDialog = ref(false);
-const collectionFn = () => {
+let bool = ref(true);
+let cardList = ref();
+let collUserId = ref();
+const collectionFn = (userId: number) => {
     collectionDialog.value = true;
+    collUserId.value = userId;
+    userStarFn();
+}
+
+const userStarFn = async (name?: string) => {
+    if (name) { collectionName.value = name!; }
+    bool.value = collectionName.value == "职位" ? false : true;
+    let res = await userStore.selectUserStar({
+        pageIndex: 1,
+        pageSize: 10,
+        bool: bool.value,
+        userId: Number(collUserId.value)
+    })
+    if (res.code == 200) {
+        cardList.value = res.data;
+    }
 }
 
 
@@ -113,51 +153,55 @@ const selectUserOpinion = async (userId: number) => {
             </div>
         </div>
 
-        <el-table :data="tableData" style="width:100%">
-            <el-table-column prop="userPhone" label="账号" />
-            <el-table-column prop="userName" label="名称" />
-            <el-table-column label="在线简历">
-                <template #default="scope">
-                    <div class="red-color">
-                        <span @click="selectUserResume(scope.row.userId)">详情</span>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column label="反馈">
-                <template #default="scope">
-                    <div class="red-color">
-                        <span @click="selectUserOpinion(scope.row.userId)">查看</span>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column label="收藏">
-                <template #default="scope">
-                    <div class="red-color" @click="collectionFn()">详情</div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="userStatusName" label="求职状态" />
-            <el-table-column label="投递记录">
-                <template #default="scope">
-                    <div class="red-color" @click="deliveryFn()">详情</div>
-                </template>
-            </el-table-column>
-            <el-table-column label="面试">
-                <template #default="scope">
-                    <div class="red-color" @click="interviewFn()">详情</div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="userSite" label="站点" />
-            <el-table-column prop="registerTime" label="注册时间" width="160px" />
-            <el-table-column prop="lastLoginTime" label="最近登录时间" width="160px" />
-        </el-table>
-        <el-pagination class="mt-10" :page-sizes="[100, 200, 300, 400]" layout="total, sizes, prev, pager, next, jumper"
-            :total="400" />
+        <div class="table-box">
+            <el-table :data="tableData" style="width:100%;height:70vh;">
+                <el-table-column prop="userPhone" label="账号" />
+                <el-table-column prop="userName" label="名称" />
+                <el-table-column label="在线简历">
+                    <template #default="scope">
+                        <div class="red-color">
+                            <span @click="selectUserResume(scope.row.userId)">详情</span>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="反馈">
+                    <template #default="scope">
+                        <div class="red-color">
+                            <span @click="selectUserOpinion(scope.row.userId)">查看</span>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="收藏">
+                    <template #default="scope">
+                        <div class="red-color" @click="collectionFn(scope.row.userId)">详情</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="userStatusName" label="求职状态" />
+                <el-table-column label="投递记录">
+                    <template #default="scope">
+                        <div class="red-color" @click="deliveryFn()">详情</div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="面试">
+                    <template #default="scope">
+                        <div class="red-color" @click="interviewFn()">详情</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="userSite" label="站点" />
+                <el-table-column prop="registerTime" label="注册时间" width="160px" />
+                <el-table-column prop="lastLoginTime" label="最近登录时间" width="160px" />
+            </el-table>
+            <el-pagination class="mt-10" :page-sizes="[100, 200, 300, 400]"
+                layout="total, sizes, prev, pager, next, jumper" :total="400" />
+        </div>
+
 
 
         <!-- 投递记录 -->
         <el-dialog v-model="deliveryDialog" width="50%" align-center>
-            <el-tabs tab-position="top" style="min-height:400px"  class="delivery">
-                <el-tab-pane label="待查看">
+            <el-tabs tab-position="top" :model-value="0" @tab-change="deliveryFn" style="min-height:400px"
+                class="delivery">
+                <!-- <el-tab-pane label="待查看">
                     <div class="cord-box">
                         <div class="header">
                             <div class="">
@@ -194,13 +238,8 @@ const selectUserOpinion = async (userId: number) => {
                             <div class="d0-ft">17:41</div>
                         </div>
                     </div>
-                </el-tab-pane>
-                <el-tab-pane label="已查看">Config</el-tab-pane>
-                <el-tab-pane label="进入筛选">Role</el-tab-pane>
-                <el-tab-pane label="通过筛选">Task</el-tab-pane>
-                <el-tab-pane label="面试">Role</el-tab-pane>
-                <el-tab-pane label="不合适">Task</el-tab-pane>
-                <el-tab-pane label="拟录用">Task</el-tab-pane>
+                </el-tab-pane> -->
+                <el-tab-pane v-for="item in stagel" :label="item.label" :name="item.value"></el-tab-pane>
             </el-tabs>
         </el-dialog>
 
@@ -221,9 +260,12 @@ const selectUserOpinion = async (userId: number) => {
 
         <!-- 收藏 -->
         <el-dialog v-model="collectionDialog" width="50%" align-center>
-            <el-tabs tab-position="top" style="height: 200px" class="demo-tabs">
-                <el-tab-pane label="职位">职位</el-tab-pane>
-                <el-tab-pane label="企业">企业</el-tab-pane>
+            <el-tabs @tab-change="userStarFn" :model-value="collectionName" tab-position="top" style="height: 200px"
+                class="demo-tabs">
+                <el-tab-pane label="企业" name="企业">企业</el-tab-pane>
+                <el-tab-pane label="职位" name="职位">
+           
+                </el-tab-pane>
             </el-tabs>
         </el-dialog>
 
@@ -289,6 +331,7 @@ const selectUserOpinion = async (userId: number) => {
 
         .cord-box {
             border-bottom: 5px solid rgb(247, 247, 247);
+
             .header {
                 display: flex;
                 justify-content: space-between;
@@ -303,7 +346,7 @@ const selectUserOpinion = async (userId: number) => {
             .count {
                 display: flex;
                 justify-content: space-between;
-                padding:5px 10px;
+                padding: 5px 10px;
 
                 .count-gs {
                     display: flex;
