@@ -69,7 +69,7 @@ getStageL();
 let collectionName = ref("企业");
 let collectionDialog = ref(false);
 let bool = ref(true);
-let cardList = ref();
+let cardList: any = ref([]);
 let collUserId = ref();
 const collectionFn = (userId: number) => {
     collectionDialog.value = true;
@@ -86,6 +86,7 @@ const userStarFn = async (name?: string) => {
         bool: bool.value,
         userId: Number(collUserId.value)
     })
+    console.log('-----------', res)
     if (res.code == 200) {
         cardList.value = res.data;
     }
@@ -264,7 +265,41 @@ const selectUserOpinion = async (userId: number) => {
                 class="demo-tabs">
                 <el-tab-pane label="企业" name="企业">企业</el-tab-pane>
                 <el-tab-pane label="职位" name="职位">
-           
+                    <div class="wrap item just-center" v-for="item, index in cardList.data" :key="index">
+                        <div class="container">
+                            <div class="header">
+                                <p class="fs-16">{{ item.positionName }}</p>
+                                <div class="align-center  mt-14">
+                                    <span class="fs-14 c-747474">{{item.positionAddr? item.positionAddr.split(',').splice(1,).join('-'):''
+}}</span>
+                                    <span class="fs-12 c-747474 gang">|</span>
+                                    <span class="fs-14 c-747474">{{ item.positionIndustry }}</span>
+                                </div>
+                                <p class="fs-12  c-747474 education flex-ja-center mt-5">{{
+        item.positionEducation
+}}</p>
+                            </div>
+                            <div class="footer mt-14 align-center ">
+                                <img class="icon" :src="item.companyLogoUrl" alt="">
+                                <div class="">
+                                    <p class="fs-14">{{ item.companyName }}</p>
+                                    <span class="fs-12 c-747474">{{ item.companySize }}人</span>
+                                    <span class=" gang c-747474">|</span>
+                                    <span class="fs-12 c-747474">{{
+        item.companyIndustry == 'null' ? '不限' : item.companyIndustry
+}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="operation" @click.stop="">
+                            <p class=" mt-14 c-fb5530 fs-14 fw-600 money">{{ !item.positionMoney ? '' :
+        item.positionMoney.replace(/,/g, '-').replace(/0/g, '') + 'k'
+}}</p>
+                            <!-- <p v-if="item.isDelivery" class="mt-30 fs-12 c-a8a8a8">已申请</p>
+                            <van-button v-if="!item.isDelivery" class="mt-20 btn fw-600" size="mini"
+                                type="primary">申请</van-button> -->
+                        </div>
+                    </div>
                 </el-tab-pane>
             </el-tabs>
         </el-dialog>
@@ -322,6 +357,68 @@ const selectUserOpinion = async (userId: number) => {
             justify-content: center;
         }
 
+    }
+
+    .item {
+        justify-content: space-between;
+        background-color: #ffffff;
+
+        .gang {
+            margin: 0 .3rem;
+        }
+
+        .container {
+            .header {
+                padding-top: 1.5rem;
+
+                .education {
+                    width: 3.2rem;
+                    height: 2rem;
+                    background-color: #f2f3f5;
+                }
+            }
+
+            .footer {
+                padding-bottom: 1.5rem;
+                gap: 1rem;
+
+                .icon {
+                    width: 3.2rem;
+                    height: 3.2rem;
+                }
+            }
+        }
+
+        .operation {
+            .content {
+                padding: 2rem;
+
+                .flex {
+                    height: 61vh;
+                    gap: 1rem;
+
+                    .title {
+                        line-height: 2.5rem;
+                    }
+                }
+
+                .btn-confirm {
+                    width: 100%;
+                }
+
+                .to-resume {
+                    min-height: 55vh;
+                }
+            }
+
+            .btn {
+                margin-top: 3rem;
+                border-radius: .5rem;
+                padding: 1.4rem 1rem;
+                background-color: #3b7dff;
+
+            }
+        }
     }
 
     .delivery {

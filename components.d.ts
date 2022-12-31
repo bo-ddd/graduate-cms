@@ -24,9 +24,7 @@ declare module '@vue/runtime-core' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
-    Item: typeof import('./src/components/card/Item.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Wrap: typeof import('./src/components/card/Wrap.vue')['default']
   }
 }
