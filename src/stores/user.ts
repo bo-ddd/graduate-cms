@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
     return Api.selectUserStar(payload);
   }
 
-  function selectUserDelivery(payload:{deliveryStatus:number}){
+  function selectUserDelivery(payload:{deliveryStatus:number,  userId: number}){
     return Api.selectUserDelivery(payload);
   }
 
@@ -46,5 +46,9 @@ export const useUserStore = defineStore('user', () => {
     return Api.getStageL(payload);
   }
 
-  return { getSelectUser, selectUserResume, selectUserOpinion,selectUserStar,selectUserDelivery,getStageL }
+  function  selectUserInterview(payload:{userId:number}){
+    return Api.selectUserInterview(payload);
+  }
+
+  return { getSelectUser, selectUserResume, selectUserOpinion,selectUserStar,selectUserDelivery,getStageL,selectUserInterview }
 })
