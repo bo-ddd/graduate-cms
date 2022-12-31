@@ -1,7 +1,7 @@
 import axios from './instance';
 
 import { postConfig, getConfig } from './config'
-import type { CompanyIndustry, CompanyList, CompanyNature, CompanyResume, CompanySize, CompanyTag } from '@/type/Zapi';
+import type { Company, CompanyIndustry, CompanyList, CompanyNature, CompanyResume, CompanySize, CompanyTag } from '@/type/Zapi';
 
 export default {
     // 获取企业列表
@@ -27,6 +27,10 @@ export default {
     // 获取所属行业
     getCompanyIndustryList: (params: CompanyIndustry = {}) => {
         return axios.post('/drop/getCompanyIndustry', params, postConfig)
+    },
+    // 获取企业详情
+    getCompanyCommon: (params: Company) => {
+        return axios.post('/system/selectCompanyCommon', params, postConfig)
     },
 
 }
