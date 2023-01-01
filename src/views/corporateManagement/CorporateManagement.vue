@@ -1,117 +1,113 @@
 <script lang="ts" setup>
-import { useCompany } from '@/stores/company';
-import type { CompanyDetail, TabledateItem } from '@/type/Company';
-import type { Industry, Nature } from '@/type/CorporateManagement';
-import type { Res } from '@/type/Res';
-import { ref } from 'vue';
-import type { Ref } from 'vue';
-import type { Company, CompanyList } from '@/type/Zapi';
+import { useCompany } from "@/stores/company";
+import type { CompanyDetail, TabledateItem } from "@/type/Company";
+import type { Industry, Nature } from "@/type/CorporateManagement";
+import type { Res } from "@/type/Res";
+import { ref } from "vue";
+import type { Ref } from "vue";
+import type { Company, CompanyList } from "@/type/Zapi";
+import { useMemberCard } from "@/stores/memberCard";
 
 /***
- * 
+ *
  * 简历管理
- * 
+ *
  */
 import candidateMain from "@/components/resumeAdmin/candidateMain.vue";
 import interviewMain from "@/components/resumeAdmin/interviewMain.vue";
 import inappropriate from "@/components/resumeAdmin/inappropriate.vue";
 let activeName = ref("first");
 
-
-
-
-
-
 const companyStore = useCompany();
 // 企业名称
-let companyFullName :Ref<string> = ref('');
+let companyFullName: Ref<string> = ref("");
 // 企业简称
-let companyName :Ref<string> = ref('');
+let companyName: Ref<string> = ref("");
 // 注册地区
-let companyAddr :Ref<string> = ref('');
+let companyAddr: Ref<string> = ref("");
 // 企业性质
 let nature: Ref<Nature[]> = ref([]);
-let natureValue: Ref<string> = ref('');
+let natureValue: Ref<string> = ref("");
 const getCompanyNatureList = async () => {
-    const res: Res = await companyStore.getCompanyNature({});
-    if (res.code == 200) {
-        nature.value = nature.value.concat(res.data);
-    }
-}
+  const res: Res = await companyStore.getCompanyNature({});
+  if (res.code == 200) {
+    nature.value = nature.value.concat(res.data);
+  }
+};
 getCompanyNatureList();
 
 // 企业规模
 let companySize: Ref<Nature[]> = ref([]);
-let companySizeValue: Ref<string> = ref('');
+let companySizeValue: Ref<string> = ref("");
 const getCompanySizeList = async () => {
-    const res: Res = await companyStore.getCompanySize({});
-    if (res.code == 200) {
-        companySize.value = companySize.value.concat(res.data);
-    }
-}
+  const res: Res = await companyStore.getCompanySize({});
+  if (res.code == 200) {
+    companySize.value = companySize.value.concat(res.data);
+  }
+};
 getCompanySizeList();
 
 // 企业标签
 let companyTag: Ref<Nature[]> = ref([]);
-let companyTagValue: Ref<string> = ref('');
+let companyTagValue: Ref<string> = ref("");
 const getCompanyTagList = async () => {
-    const res: Res = await companyStore.getCompanyTag({});
-    if (res.code == 200) {
-        companyTag.value = companyTag.value.concat(res.data);
-    }
-}
+  const res: Res = await companyStore.getCompanyTag({});
+  if (res.code == 200) {
+    companyTag.value = companyTag.value.concat(res.data);
+  }
+};
 getCompanyTagList();
 // 所属行业
 let companyIndustry: Ref<Industry[]> = ref([]);
-let companyIndustryValue: Ref<string> = ref('');
+let companyIndustryValue: Ref<string> = ref("");
 const getCompanyIndustryList = async () => {
-    const res: Res = await companyStore.getCompanyIndustry({});
-    if (res.code == 200) {
-        companyIndustry.value = companyIndustry.value.concat(res.data);
-    }  
-}
+  const res: Res = await companyStore.getCompanyIndustry({});
+  if (res.code == 200) {
+    companyIndustry.value = companyIndustry.value.concat(res.data);
+  }
+};
 getCompanyIndustryList();
 
 // 表格
 let tableData = ref();
 const getSelectCompanyList = async (params: CompanyList) => {
-    const res: Res = await companyStore.getSelectCompany(params);
-    console.log(res);
-    if (res.code == 200) {
-        tableData.value = res.data.data;
-        tableData.value.forEach((item: TabledateItem, index: number) => {
-            let key: keyof any;
-            for (key in item) {
-                if (key == 'vipLevel') {
-                    if (item[key] == 1) {
-                        item[key] = '普通会员'
-                    } else if (item[key] == 2) {
-                        item[key] = '白银会员'
-                    }
-                }
-            };
-            Object.assign(item, { index: index + 1 })
-        });
-        console.log(tableData.value);
-    }
-}
+  const res: Res = await companyStore.getSelectCompany(params);
+  console.log(res);
+  if (res.code == 200) {
+    tableData.value = res.data.data;
+    tableData.value.forEach((item: TabledateItem, index: number) => {
+      let key: keyof any;
+      for (key in item) {
+        if (key == "vipLevel") {
+          if (item[key] == 1) {
+            item[key] = "普通会员";
+          } else if (item[key] == 2) {
+            item[key] = "白银会员";
+          }
+        }
+      }
+      Object.assign(item, { index: index + 1 });
+    });
+    console.log(tableData.value);
+  }
+};
 getSelectCompanyList({
-    // companyAddr: '',
-    // companyFullName: '',
-    // companyIndustryLeft: 0,
-    // companyIndustryRight: 0,
-    // companyName: '',
-    // companyNature: 0,
-    // companySize: 0,
-    // companyTag: 0,
-    pageIndex: 1,
-    pageSize: 10,
-    token: '',
+  // companyAddr: '',
+  // companyFullName: '',
+  // companyIndustryLeft: 0,
+  // companyIndustryRight: 0,
+  // companyName: '',
+  // companyNature: 0,
+  // companySize: 0,
+  // companyTag: 0,
+  pageIndex: 1,
+  pageSize: 10,
+  token: "",
 });
 
 // 查询
-const query = ()=>{
-    getSelectCompanyList({
+const query = () => {
+  getSelectCompanyList({
     companyAddr: companyAddr.value,
     companyFullName: companyFullName.value,
     companyIndustryLeft: 0,
@@ -122,235 +118,479 @@ const query = ()=>{
     companyTag: 0,
     pageIndex: 0,
     pageSize: 0,
-    token: '',
-});
-}
-
+    token: "",
+  });
+};
 
 //简历管理
 let resume = ref(false);
 let companyId = ref();
-const isShowResume = function (id:number) {
-    companyId.value = id;
-    console.log(companyId.value);
-    
-    resume.value = true;
+const isShowResume = function (id: number) {
+  companyId.value = id;
+  console.log(companyId.value);
 
-}
+  resume.value = true;
+};
 //发布职位
+let usePosition = useMemberCard();
 let position = ref(false);
-const isShowPosition = function () {
-    position.value = true;
+const recruitNum = ref(0);
+const positionList = ref([]);
+const downPositionList = ref([]);
+const downNum = ref(0);
+const currentIndex = ref(0);
+const pageNum = ref(1);
+const pageSize = ref(10);
+const pageNum2 = ref(1);
+const pageSize2 = ref(10);
+const companyPositionId: any = ref(null);
+const isShowPosition = function (companyId: number) {
+  position.value = true;
+  companyPositionId.value=companyId;
+  getPositionInfo();
+};
+const tab = function (num: number) {
+  currentIndex.value = num;
+};
 
-}
+//获取在招分页页面的数据
+let getPositionInfo = () => {
+  getPositionList();
+  getDownList();
+};
+let getPositionList = async function () {
+  let res = await usePosition.getPosition({
+    pageIndex: pageNum.value,
+    pageSize: pageSize.value,
+    positionStatus: 1,
+    companyId:companyPositionId.value,
+  });
+  if (res.code == 200) {
+    positionList.value = res.data ? res.data.data : [];
+    recruitNum.value = res.data ? res.data.maxCount : 0;
+  }
+};
+//获取下线分页数据
+const getDownList = async function () {
+  let res = await usePosition.getPosition({
+    pageIndex: pageNum2.value,
+    pageSize: pageSize2.value,
+    positionStatus: 2,
+    companyId:companyPositionId.value,
+  });
+  if (res.code == 200) {
+    downNum.value = res.data ? res.data.maxCount : 0;
+    downPositionList.value = res.data ? res.data.data : [];
+  }
+};
+
+//在招分页：
+const handleCurrentChange = async (val: number) => {
+  pageNum.value = val;
+  getPositionList();
+};
+//下线分页：
+const handleCurrentChange2 = async (val: number) => {
+  pageNum2.value = val;
+  getDownList();
+};
 //邀请人才
 let personnel = ref(false);
 const isShowPersonnel = function () {
-    personnel.value = true;
-
-}
+  personnel.value = true;
+};
 //企业详情
 let details = ref(false);
 let companyDetail = ref({}) as Ref<CompanyDetail>;
 const getCompanyCommon = async (params: Company) => {
-    let res: Res = await companyStore.getCompanyCommon(params);
-    if (res.code == 200) {
-        companyDetail.value = res.data;
-    }
-    console.log(companyDetail.value);
-}
+  let res: Res = await companyStore.getCompanyCommon(params);
+  if (res.code == 200) {
+    companyDetail.value = res.data;
+  }
+  console.log(companyDetail.value);
+};
 const isShowDetails = function (id: number) {
-    details.value = true;
-    getCompanyCommon({
-        companyId: id
-    });
-}
-
-
+  details.value = true;
+  getCompanyCommon({
+    companyId: id,
+  });
+};
 </script>
 
 <template>
-    <div class="user">
-        <div class="header">
-            <div class="mt-10">
-                <h4>查询条件:</h4>
-            </div>
-            <div class="header-main">
-                <div>公司名称</div>
-                <div>
-                    <el-input class="input-width" v-model="companyFullName" placeholder="请输入公司名称" />
-                </div>
-                <div>企业性质</div>
-                <div>
-                    <el-select class="m-2 input-width" v-model="natureValue" placeholder="请选择企业性质" size="large">
-                        <el-option v-for="item, index in nature" :key="index" :label="item.label" :value="item.value" />
-                    </el-select>
-                </div>
-                <div>企业规模</div>
-                <div>
-                    <el-select class="m-2 input-width" v-model="companySizeValue" placeholder="请选择企业规模" size="large">
-                        <el-option v-for="item, index in companySize" :key="index" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </div>
-                <div>企业标签</div>
-                <div>
-                    <el-select class="m-2 input-width" v-model="companyTagValue" placeholder="请选择企业标签" size="large">
-                        <el-option v-for="item, index in companyTag" :key="index" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </div>
-
-                <div>所属行业</div>
-                <div>
-                    <el-select class="m-2 input-width" v-model="companyIndustryValue" placeholder="请选择所属行业"
-                        size="large">
-                        <el-option v-for="item, index in companyIndustry" :key="index" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </div>
-
-                <div>注册地区</div>
-                <div>
-                    <el-input class="input-width" v-model="companyAddr" placeholder="请输入注册地区" />
-                </div>
-
-                <div>品牌名称</div>
-                <div>
-                    <el-input class="input-width" v-model="companyName" placeholder="请输入品牌名称(简称)" />
-                </div>
-                <div>
-                    <el-button class="find-btn" type="primary" @click="query()">查询</el-button>
-                </div>
-            </div>
+  <div class="user">
+    <div class="header">
+      <div class="mt-10">
+        <h4>查询条件:</h4>
+      </div>
+      <div class="header-main">
+        <div>公司名称</div>
+        <div>
+          <el-input class="input-width" v-model="companyFullName" placeholder="请输入公司名称" />
+        </div>
+        <div>企业性质</div>
+        <div>
+          <el-select
+            class="m-2 input-width"
+            v-model="natureValue"
+            placeholder="请选择企业性质"
+            size="large"
+          >
+            <el-option
+              v-for="item, index in nature"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div>企业规模</div>
+        <div>
+          <el-select
+            class="m-2 input-width"
+            v-model="companySizeValue"
+            placeholder="请选择企业规模"
+            size="large"
+          >
+            <el-option
+              v-for="item, index in companySize"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div>企业标签</div>
+        <div>
+          <el-select
+            class="m-2 input-width"
+            v-model="companyTagValue"
+            placeholder="请选择企业标签"
+            size="large"
+          >
+            <el-option
+              v-for="item, index in companyTag"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </div>
 
-        <el-table :data="tableData" height="420" style="width: 100%">
-            <el-table-column prop="index" label="序号" align="center" />
-            <el-table-column prop="companyId" label="企业id" align="center" />
-            <el-table-column prop="companyFullName" label="企业名称" align="center" />
-            <el-table-column prop="companyName" label="品牌名称" align="center" />
-            <el-table-column label="简历管理" align="center">
-                <template #default="scope">
-                    <!-- {{ scope.row.index }} -->
-                    <el-button type="danger" @click="isShowResume(scope.row.companyId)" text class="btn-xq">详情</el-button>
-                </template>
-            </el-table-column>
+        <div>所属行业</div>
+        <div>
+          <el-select
+            class="m-2 input-width"
+            v-model="companyIndustryValue"
+            placeholder="请选择所属行业"
+            size="large"
+          >
+            <el-option
+              v-for="item, index in companyIndustry"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
 
-            <el-table-column prop="companyIndustry" label="所属行业" align="center" />
-            <el-table-column label="发布职位" align="center">
-                <template #default="scope">
-                    <!-- {{ scope.row.index }} -->
-                    <el-button type="danger" @click="isShowPosition()" text class="btn-xq">详情</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column prop="vipLevel" label="会员等级" align="center" />
-            <el-table-column prop="companyRegisterAddr" label="注册地区" align="center" />
-            <el-table-column label="邀请人才" align="center">
-                <template #default="scope">
-                    <!-- {{ scope.row.index }} -->
-                    <el-button type="danger" @click="isShowPersonnel()" text class="btn-xq">详情</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="企业详情" align="center">
-                <template #default="scope">
-                    <!-- {{ scope.row.index }} -->
-                    <el-button type="danger" @click="isShowDetails(scope.row.companyId)" text
-                        class="btn-xq">详情</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <div>注册地区</div>
+        <div>
+          <el-input class="input-width" v-model="companyAddr" placeholder="请输入注册地区" />
+        </div>
 
-
-
-
-
-
-        <!-- 简历管理 -->
-        <el-dialog v-model="resume" class="overf" destroy-on-close width="80%" align-center>
-
-            
-  <div class="resume">
-    <div class="header">
-      <el-tabs class="demo-tabs" v-model="activeName" :stretch="true">
-        <el-tab-pane label="候选人" name="first"></el-tab-pane>
-        <el-tab-pane label="面试管理" name="second"></el-tab-pane>
-        <el-tab-pane label="不合适" name="third"></el-tab-pane>
-      </el-tabs>
+        <div>品牌名称</div>
+        <div>
+          <el-input class="input-width" v-model="companyName" placeholder="请输入品牌名称(简称)" />
+        </div>
+        <div>
+          <el-button class="find-btn" type="primary" @click="query()">查询</el-button>
+        </div>
+      </div>
     </div>
 
-    <candidateMain :companyId="companyId" v-if="activeName == 'first'"></candidateMain>
-    <interviewMain :companyId="companyId" v-if="activeName == 'second'"></interviewMain>
-    <inappropriate :companyId="companyId"  v-if="activeName == 'third'"></inappropriate>
+    <el-table :data="tableData" height="420" style="width: 100%">
+      <el-table-column prop="index" label="序号" align="center" />
+      <el-table-column prop="companyId" label="企业id" align="center" />
+      <el-table-column prop="companyFullName" label="企业名称" align="center" />
+      <el-table-column prop="companyName" label="品牌名称" align="center" />
+      <el-table-column label="简历管理" align="center">
+        <template #default="scope">
+          <!-- {{ scope.row.index }} -->
+          <el-button type="danger" @click="isShowResume(scope.row.companyId)" text class="btn-xq">详情</el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="companyIndustry" label="所属行业" align="center" />
+      <el-table-column label="发布职位" align="center">
+        <template #default="scope">
+          <!-- {{ scope.row.index }} -->
+          <el-button
+            type="danger"
+            @click="isShowPosition(scope.row.companyId)"
+            text
+            class="btn-xq"
+          >详情</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="vipLevel" label="会员等级" align="center" />
+      <el-table-column prop="companyRegisterAddr" label="注册地区" align="center" />
+      <el-table-column label="邀请人才" align="center">
+        <template #default="scope">
+          <!-- {{ scope.row.index }} -->
+          <el-button type="danger" @click="isShowPersonnel()" text class="btn-xq">详情</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="企业详情" align="center">
+        <template #default="scope">
+          <!-- {{ scope.row.index }} -->
+          <el-button
+            type="danger"
+            @click="isShowDetails(scope.row.companyId)"
+            text
+            class="btn-xq"
+          >详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 简历管理 -->
+    <el-dialog v-model="resume" class="overf" destroy-on-close width="80%" align-center>
+      <div class="resume">
+        <div class="header">
+          <el-tabs class="demo-tabs" v-model="activeName" :stretch="true">
+            <el-tab-pane label="候选人" name="first"></el-tab-pane>
+            <el-tab-pane label="面试管理" name="second"></el-tab-pane>
+            <el-tab-pane label="不合适" name="third"></el-tab-pane>
+          </el-tabs>
+        </div>
+
+        <candidateMain :companyId="companyId" v-if="activeName == 'first'"></candidateMain>
+        <interviewMain :companyId="companyId" v-if="activeName == 'second'"></interviewMain>
+        <inappropriate :companyId="companyId" v-if="activeName == 'third'"></inappropriate>
+      </div>
+    </el-dialog>
+
+    <!-- 发布职位 -->
+    <el-dialog v-model="position" class="position-dialog" width="80%" align-center>
+      <div class="position">
+        <div class="position-page">
+          <div class="position-header flex-ja-center" ref="tab-box">
+            <div
+              class="head-nav flex-ja-center cur-po"
+              :class="currentIndex== 0?'active':''"
+              @click="tab(0)"
+            >
+              <div class="nav-title">
+                <span>在招中</span>
+                <span class="fs-12 num">{{recruitNum}}</span>
+              </div>
+              <div class="bottom-line"></div>
+            </div>
+            <div
+              class="head-nav flex-ja-center cur-po"
+              :class="currentIndex== 1?'active':''"
+              @click="tab(1)"
+            >
+              <div class="nav-title">
+                <span>已下线</span>
+                <span class="fs-12 num">{{downNum}}</span>
+              </div>
+              <div class="bottom-line"></div>
+            </div>
+          </div>
+          <div class="position-content">
+            <div class="tab1" v-show="currentIndex== 0">
+              <div class="job plr-20">
+                <div class="job-head just-between">
+                </div>
+                <div class="job-box mb-15" v-for="item in positionList" :key="item.userId">
+                  <div class="info-job just-between">
+                    <div class="job-title fs-18">
+                      <div class="mb-15 align-center">
+                        <span>{{item.positionName}}</span>
+                        <span v-if="item.positionStatus2==0" class="tip-span">审核中</span>
+                        <span v-if="item.positionStatus2==2" class="tip-span warning">审核未通过</span>
+                      </div>
+                      <div class="info-list align-center">
+                        <div class="money-num mr-15">10-15k</div>
+                        <div class="align-center fs-14">
+                          <div>{{item.positionNature==0?'全职':'实习'}}</div>
+                          <div class="bor"></div>
+                          <div>大专</div>
+                          <div class="bor"></div>
+                          <div>北京</div>
+                          <div class="bor"></div>
+                          <div>{{item.positionType}}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="resume-info flex-ja-center">
+                      <div class="resume-box cur-po">
+                        <div class="resume-num">{{item.newResumeCount}}</div>
+                        <div class="mt-10 fs-14">新简历</div>
+                      </div>
+                      <div class="resume-box cur-po">
+                        <div class="resume-num">{{item.resumeCount}}</div>
+                        <div class="mt-10 fs-14">总简历</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="edit-job just-between fs-14">
+                    <div v-if="item.refreshTime">
+                      刷新时间 :
+                      <span>&nbsp; {{item.refreshTime}}</span>
+                    </div>
+                    <div v-else>
+                      创建时间 :
+                      <span>&nbsp; {{item.createTime}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="just-center mt-20 mb-20" v-if="recruitNum>10">
+                  <el-pagination
+                    :background="true"
+                    v-model:currentPage="pageNum"
+                    v-model:page-size="pageSize"
+                    layout="prev, pager, next"
+                    :total="recruitNum"
+                    @current-change="handleCurrentChange"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="tab2" v-show="currentIndex==1">
+              <div class="void-box void-title flex-ja-center" v-show="downNum==0">
+                <div class>
+                  <img src="@/assets/images/img-no_position.png" />
+                  <div class="mt-15">暂无已下线职位</div>
+                </div>
+              </div>
+              <div class="void-box" v-show="downNum!=0">
+                <div class="pb-30 plr-20">
+                  <div class="job-head2 just-between">
+                    <div></div>
+                  </div>
+                  <div class="job-box" v-for="item in downPositionList" :key="item.userId">
+                    <div class="info-job just-between">
+                      <div class="job-title fs-18">
+                        <div class="mb-15 align-center">
+                          <span>{{item.positionName}}</span>
+                          <span v-if="item.positionStatus2==0" class="tip-span">审核中</span>
+                          <span v-if="item.positionStatus2==2" class="tip-span warning">审核未通过</span>
+                        </div>
+                        <div class="info-list align-center">
+                          <div class="money-num mr-15">10-15k</div>
+                          <div class="align-center fs-14">
+                            <div>{{item.positionNature==0?'全职':'实习'}}</div>
+                            <div class="bor"></div>
+                            <div>大专</div>
+                            <div class="bor"></div>
+                            <div>北京</div>
+                            <div class="bor"></div>
+                            <div>{{item.positionType}}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="resume-info flex-ja-center">
+                        <div class="resume-box cur-po">
+                          <div class="resume-num">{{item.newResumeCount}}</div>
+                          <div class="mt-10 fs-14">新简历</div>
+                        </div>
+                        <div class="resume-box cur-po">
+                          <div class="resume-num">{{item.resumeCount}}</div>
+                          <div class="mt-10 fs-14">总简历</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="just-center mt-20" v-if="downNum>10">
+                    <el-pagination
+                      :background="true"
+                      v-model:currentPage="pageNum2"
+                      v-model:page-size="pageSize2"
+                      layout="prev, pager, next"
+                      :total="downNum"
+                      @current-change="handleCurrentChange2"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+    <!-- 邀请人才 -->
+    <el-dialog v-model="personnel" width="80%" align-center></el-dialog>
+    <!-- 企业详情 -->
+    <el-dialog v-model="details" width="30%" align-center title="企业详情">
+      <div class="align-center company-detail mt-20">
+        <p class="label">企业全称 ：</p>
+        {{ companyDetail.companyFullName }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">品牌名 ：</p>
+        {{ companyDetail.companyName }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">注册详细地址 ：</p>
+        {{ companyDetail.companyRegisterAddr }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">所属行业 ：</p>
+        {{ companyDetail.companyIndustry }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">企业规模 ：</p>
+        {{ companyDetail.companySize }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">社会信用代码 ：</p>
+        {{ companyDetail.companySocialCreditCode }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">联系人 ：</p>
+        {{ companyDetail.companyContactName }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">联系方式 ：</p>
+        {{ companyDetail.companyContactPhone }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">接收简历邮箱 ：</p>
+        {{ companyDetail.companyContactEmail }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">企业简介 ：</p>
+        <a class="company-introducation" :title="companyDetail.companyIntroducation">
+          {{
+          companyDetail.companyIntroducation
+          }}
+        </a>
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">企业官网 ：</p>
+        {{ companyDetail.companyWebUrl }}
+      </div>
+      <div class="align-center company-detail mt-20">
+        <p class="label">会员等级 ：</p>
+        {{ companyDetail.vipLevel }}
+      </div>
+    </el-dialog>
+
+    <el-pagination
+      class="mt-10"
+      :page-sizes="[100, 200, 300, 400]"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="400"
+    />
   </div>
-
-
-
-        </el-dialog>
-
-
-
-
-        <!-- 发布职位 -->
-        <el-dialog v-model="position" width="80%" align-center>
-
-        </el-dialog>
-        <!-- 邀请人才 -->
-        <el-dialog v-model="personnel" width="80%" align-center>
-
-        </el-dialog>
-        <!-- 企业详情 -->
-        <el-dialog v-model="details" width="30%" align-center title="企业详情">
-            <div class="align-center company-detail mt-20">
-                <p class="label">企业全称 ：</p> {{ companyDetail.companyFullName }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">品牌名 ：</p> {{ companyDetail.companyName }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">注册详细地址 ：</p> {{ companyDetail.companyRegisterAddr }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">所属行业 ：</p> {{ companyDetail.companyIndustry }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">企业规模 ：</p> {{ companyDetail.companySize }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">社会信用代码 ：</p> {{ companyDetail.companySocialCreditCode }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">联系人 ：</p> {{ companyDetail.companyContactName }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">联系方式 ：</p> {{ companyDetail.companyContactPhone }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">接收简历邮箱 ：</p> {{ companyDetail.companyContactEmail }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">企业简介 ：</p>
-                <a class="company-introducation" :title="companyDetail.companyIntroducation">{{
-        companyDetail.companyIntroducation
-}}</a>
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">企业官网 ：</p> {{ companyDetail.companyWebUrl }}
-            </div>
-            <div class="align-center company-detail mt-20">
-                <p class="label">会员等级 ：</p> {{ companyDetail.vipLevel }}
-            </div>
-        </el-dialog>
-
-        <el-pagination class="mt-10" :page-sizes="[100, 200, 300, 400]" layout="total, sizes, prev, pager, next, jumper"
-            :total="400" />
-    </div>
 </template>
 
 <style lang="scss" scoped>
 ///简历管理
-
-
 
 .resume {
   min-height: calc(100vh - 200px);
@@ -406,74 +646,268 @@ const isShowDetails = function (id: number) {
   width: 50px;
 }
 
-
-
 .user {
+  .input-width {
+    width: 163px;
+    height: 40px;
+  }
 
-    .input-width {
-        width: 163px;
-        height: 40px;
+  .header {
+    display: flex;
+    border-bottom: 1px solid rgb(237, 237, 237);
+    padding-bottom: 20px;
+    align-items: top;
+
+    .header-main {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 22px;
+      width: 86%;
+      margin-left: 10px;
     }
 
-    .header {
-        display: flex;
-        border-bottom: 1px solid rgb(237, 237, 237);
-        padding-bottom: 20px;
-        align-items: top;
-
-        .header-main {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px 22px;
-            width: 86%;
-            margin-left: 10px;
-        }
-
-        .find-btn {
-            padding: 0 30px;
-        }
+    .find-btn {
+      padding: 0 30px;
     }
-
+  }
 }
 
 // 企业详情
 .company-detail {
-    gap: 20px;
+  gap: 20px;
 
-    &>.label {
-        width: 120px;
-        font-weight: 600;
-        text-align: center;
-    }
+  & > .label {
+    width: 120px;
+    font-weight: 600;
+    text-align: center;
+  }
 
-    .company-introducation {
-        width: 15vw;
-        overflow: hidden; //超出的文本隐藏
-        text-overflow: ellipsis; //溢出用省略号显示
-        white-space: nowrap; // 默认不换行；
-
-    }
-
+  .company-introducation {
+    width: 15vw;
+    overflow: hidden; //超出的文本隐藏
+    text-overflow: ellipsis; //溢出用省略号显示
+    white-space: nowrap; // 默认不换行；
+  }
 }
 
 :deep(.el-dialog__body) {
-    padding-top: 0 !important;
-    overflow: auto;
-    height: 680px !important;
+  padding: 0 !important;
+  overflow: auto;
+  height: 680px !important;
 }
+//职位列表
+.position-dialog {
+}
+.position-page {
+  .position-header {
+    height: 55px;
+    position: relative;
 
-
-
-
-
-
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-
-    /* Webkit内核兼容CSS选择器样式 放到这里 */
-    .btn-xq {
-        color: #f56c6c !important;
+    box-shadow: 0px 3px 5px #e9e9e9;
+    .head-nav {
+      width: 290px;
+      height: 100%;
+      box-sizing: border-box;
+      position: relative;
+      .nav-title {
+        position: relative;
+        .num {
+          position: absolute;
+          left: 58px;
+          min-width: 25px;
+        }
+      }
     }
+    .active {
+      font-weight: 700;
+    }
+    .active .bottom-line {
+      position: absolute;
+      width: 55px;
+      height: 3px;
+      background-color: #356ffa;
+      bottom: 0;
+      left: 42%;
+      border-radius: 10px;
+    }
+  }
+  .position-content {
+    overflow: hidden;
+    width: 100%;
+    background-color: #f6f7f9;
+    .tab2 {
+      background-color: white;
+      overflow: hidden;
+      color: black;
+      .void-box {
+        min-height: calc(100vh - 55px);
+
+        text-align: center;
+        img {
+          width: 240px;
+          height: 210px;
+        }
+      }
+      .void-title {
+        color: #515a6e;
+      }
+      .job-head2 {
+        margin: 35px 0;
+        .release-btn {
+          gap: 10px;
+          font-size: 16px;
+          padding: 4px 20px;
+          background-color: #356ffa;
+          color: white;
+          border-radius: 2px;
+        }
+      }
+      .info-job {
+        padding: 25px 0 !important;
+      }
+      .bor {
+        height: 9px;
+        border-left: 2px solid rgb(197, 200, 206);
+        margin: 0 6px;
+      }
+
+      .refresh-info {
+        font-size: 14px;
+        .cur-po {
+          color: #515a6e;
+        }
+        .cur-po:hover {
+          color: #356ffa;
+        }
+      }
+    }
+    .job {
+      box-sizing: border-box;
+      overflow: hidden;
+      min-height: calc(100vh - 55px);
+      padding-bottom: 120px;
+    }
+    .job-head {
+      .point-num {
+        color: #356ffa;
+      }
+      .release-btn {
+        gap: 10px;
+        font-size: 16px;
+        padding: 4px 20px;
+        background-color: #356ffa;
+        color: white;
+        border-radius: 2px;
+      }
+      color: #515a6e;
+      margin: 35px 0;
+    }
+    .job-box {
+      background-color: #fff;
+      .info-job {
+        padding: 30px 25px;
+        border-bottom: 2px solid #f6f7f9;
+        .job-title {
+          width: 400px;
+          .tip-span {
+            // min-width: 50px;
+            // height: 20px;
+            box-sizing: border-box;
+            border-radius: 2px;
+            border: 1px solid #445e9b;
+            margin-left: 12px;
+            font-size: 12px;
+            font-family: MicrosoftYaHei;
+            color: #445e9b;
+            line-height: 18px;
+            text-align: center;
+            padding: 0 4px;
+          }
+          .warning {
+            color: #ed4112;
+            border: 1px solid #ed4112;
+          }
+        }
+        .info-list {
+          color: rgb(81, 90, 110);
+
+          .bor {
+            height: 9px;
+            border-left: 2px solid rgb(197, 200, 206);
+            margin: 0 10px;
+          }
+        }
+        .resume-info {
+          color: #515a6e;
+          .resume-box {
+            padding: 0 35px;
+          }
+          .resume-box:hover {
+            .resume-num {
+              color: #356ffa;
+            }
+          }
+          .resume-num {
+            text-align: center;
+          }
+        }
+        .money-num {
+          color: #f75736;
+        }
+
+        .refresh-info {
+          gap: 0 12px;
+          :deep(.el-button) {
+            font-size: 16px;
+            box-sizing: border-box;
+            padding: 17px 15px;
+          }
+          :deep(.el-button + .el-button) {
+            margin-left: 0;
+            padding: 17px 20px;
+          }
+          .autorefresh-btn {
+            box-sizing: border-box;
+            padding: 7px 12px;
+            border: 1px solid #356ffa;
+            color: #356ffa;
+            border-radius: 4px;
+            transition: all 0.3s;
+          }
+          .autorefresh-btn:hover {
+            background-color: #356ffa;
+            color: white;
+          }
+          .refresh-btn {
+            padding: 7px 15px;
+            color: white;
+            border: 1px solid #356ffa;
+            border-radius: 4px;
+            background-color: #356ffa;
+          }
+        }
+      }
+      .edit-job {
+        color: #515a6e;
+        padding: 18px 25px;
+        .cur-po:hover {
+          color: #356ffa;
+        }
+        .bor {
+          height: 10px;
+          border-left: 2px solid rgb(197, 200, 206);
+          margin: 0 16px;
+        }
+      }
+    }
+  }
+}
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  /* Webkit内核兼容CSS选择器样式 放到这里 */
+  .btn-xq {
+    color: #f56c6c !important;
+  }
 }
 </style>
 
