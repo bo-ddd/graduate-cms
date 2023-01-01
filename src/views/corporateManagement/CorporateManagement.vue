@@ -3,9 +3,12 @@ import { useCompany } from "@/stores/company";
 import type { CompanyDetail, TabledateItem } from "@/type/Company";
 import type { Industry, Nature } from "@/type/CorporateManagement";
 import type { Res } from "@/type/Res";
-import { ref } from "vue";
+import { ref,reactive,watch } from "vue";
 import type { Ref } from "vue";
 import type { Company, CompanyList } from "@/type/Zapi";
+import type{School,UserInfo,HSRes,Check,Form,InvitationForm} from "@/type/InvitePerson";
+import {useInvitation} from "@/stores/inviationPositon";
+import cityJson from "@/assets/json/city.json";
 import { useMemberCard } from "@/stores/memberCard";
 
 /***
@@ -215,6 +218,166 @@ const isShowDetails = function (id: number) {
     companyId: id,
   });
 };
+
+
+// 我是邀请人才页面的js开始
+//邀请人员后一个页面的分页
+let PersonStore = useInvitation();
+let industry = ref();
+let form: Form = reactive({
+    sex: null,//性别
+    education: null,//学历
+    professional: null,//专业
+    city: '',//城市
+    wishMoneyLeft: null,//最低薪资
+    wishMoneyRight: null,//最高薪资
+});//这个是人才列表模糊查询
+let pagingInvite = reactive({
+    total: 100,
+    pageSize: 3,
+    pageIndex: 1,
+})
+let invitationForm:InvitationForm = reactive<{
+    status: any;
+    positionId: any;
+}>({
+    status: null,
+    positionId: null,
+});
+let inviationNumber = ref(0);//这个是当日邀请次数
+let paging = reactive({
+    total: 0,
+    pageSize: 3,
+    pageIndex: 1,
+});//邀请人员分页
+let showGuid = ref(false);//展示导航
+let circleUrl = ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png');
+let checkItem = ref(0);//默认展示哪个页面
+//切换页面
+const handleItemChange = (index: number) => {
+    checkItem.value = index;
+}
+//清空选择的方法
+const cancelCheck = () => {
+    let key: keyof Form;
+    for (key in form) {
+        form[key] = null;
+    }
+}
+let educationArr = reactive<Check[]>([]);//学历的列表
+let majorArr = reactive<any[]>([]);//专业的列表
+let sexArr = reactive<any[]>([]);//性别的列表
+let positionArr = reactive<any[]>([]);//职位列表
+let wishMoneyLeftList = reactive<any[]>([]);//这个是期望薪资左边的列表
+let wishMoneyRightList = reactive<any[]>([]);//这个是期望薪资右边的列表
+let talentList = reactive<any[]>([]);//这个是人才列表
+let positionCategoryList = reactive<any[]>([]);//这个是获取职位类别的数组
+let invitationList = reactive<any[]>([]);//这个是邀请人才的列表
+let statusList = reactive<any[]>([]);//邀请人才状态
+
+//这个是学历的列表
+const getEducationList = async () => {
+    const res: Res | any = await PersonStore.getEducationList();
+    if (res.code !== 200) return;
+    let resData = (res.data).reverse();//获取学历数据
+    educationArr.push(...resData);
+}
+getEducationList();//调用获取学历列表
+//这个是获取专业列表的方法
+const getProfessionalList = async () => {
+    const res: Res | any = await PersonStore.getProfessionaList({});
+    if (res.code !== 200) return;
+    majorArr.length = 0;
+    majorArr.push(...(res.data));
+}
+getProfessionalList();//调用获取专业列表
+//这个是获取性别列表的方法
+const getSexList = async () => {
+    const res: Res | any = await PersonStore.getSexList();
+    if (res.code !== 200) return;
+    sexArr.push(...(res.data));
+}
+getSexList();
+//这个是获取职位列表的方法
+const getMyPositionList = async () => {
+    const res: Res | any = await PersonStore.getPositionList();
+    positionArr.push(...(res.data))
+}
+getMyPositionList();
+
+//获取期望薪资的接口
+const getWishMoneyList = async () => {
+    const res: Res | any = await PersonStore.getWishMoneyList();
+    wishMoneyLeftList.push(...(res.data).wishMoenyLeftList);
+    wishMoneyRightList.push(...(res.data).wishMoenyRightList);
+}
+getWishMoneyList();
+//获取邀请人才列表
+const inviteTalentList = async () => {
+    let obj: any = {};
+    let key:keyof InvitationForm;
+    for (key in invitationForm) {
+       if(invitationForm[key]){
+            obj[key] = invitationForm[key];
+       }
+    }
+    obj['pageIndex'] = pagingInvite.pageIndex;
+    obj['pageSize'] = pagingInvite.pageSize;
+    const res: HSRes | any = await PersonStore.selectInviteList(obj);
+    if (res.code !== 200) return;
+    invitationList.length = 0;
+    invitationList.push(...(res.data.data));
+    pagingInvite.total = res.data.totalCount;
+}
+inviteTalentList();
+//确定邀请人才列表
+const getInvitaion = ()=>{
+    pagingInvite.pageIndex = 1;
+    pagingInvite.pageSize = 3;
+    inviteTalentList();
+}
+const getTalentList = async () => {
+    let obj: any = {};
+    let key: keyof Form;
+    for (key in form) {
+        if (form[key]) {
+            obj[key] = form[key];
+        }
+    }
+    if (industry.value) {
+        obj['industryLeft'] = industry.value[0];
+        obj['industryRight'] = industry.value[1];
+    }
+    if(obj['city']){
+        obj['city'] = obj['city'][1];
+    }
+    obj['pageIndex'] = paging.pageIndex;
+    obj['pageSize'] = paging.pageSize;
+    const res: HSRes | any = await PersonStore.getTalentList(obj);
+    if (res.code != 200) return;
+    talentList.length = 0;
+    talentList.push(...(res.data).data);
+    paging.total = res.data.maxCount;
+}
+getTalentList();
+const getTalent = ()=>{
+    paging.pageIndex = 1;
+    paging.pageSize = 3;
+    getTalentList();
+}
+watch(paging, () => {
+    //监听页数更改直接调用获取人才列表的接口
+    getTalentList();
+})
+watch(pagingInvite,()=>{
+    inviteTalentList();
+})
+const getMoney: (data: string) => string = (data: string) => {
+    if (!data) return '';
+    const res = data.split(",").sort((a: any, b: any) => { return a - b });
+    return `${res[0].substring(0,res[0].length-3)}-${res[1].substring(0,res[1].length-3)}k`
+}
+// 我是邀请人才页面的js结束
 </script>
 
 <template>
@@ -523,7 +686,255 @@ const isShowDetails = function (id: number) {
       </div>
     </el-dialog>
     <!-- 邀请人才 -->
-    <el-dialog v-model="personnel" width="80%" align-center></el-dialog>
+    <el-dialog v-model="personnel" width="80%" align-center>
+      <div class="personnel">
+        <div class="operation-wrap box-shadow">
+            <div class="wrap operation-container fs-18">
+                <div class="operation-item" @click="handleItemChange(0)">
+                    <p :class="[checkItem == 0 ? 'span-check' : '']">人才库</p>
+                    <div :class="[checkItem == 0 ? 'btm-check' : '']"></div>
+                </div>
+                <div class="operation-item" @click="handleItemChange(1), inviteTalentList()">
+                    <p :class="[checkItem == 1 ? 'span-check' : '']">我邀请的</p>
+                    <div :class="[checkItem == 1 ? 'btm-check' : '']"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人才数据的页面 -->
+        <div class="talent-pool-wrap" v-show="checkItem == 0">
+
+            <!-- 模糊查询的列表 -->
+            <div class="wrap filter-wrap">
+                <div class="filter-wrap-top">
+                    <el-select v-model="form.sex" class="m-2 check-sex mr-30" placeholder="性别选择" size="large">
+                        <el-option v-for="item in sexArr" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
+                    <el-select v-model="form.education" class="m-2 check-education mr-30" placeholder="最高学历选择"
+                        size="large">
+                        <el-option v-for="item in educationArr" :key="item.value" :label="item.label"
+                            :value="item.value" />
+                    </el-select>
+                    <el-select v-model="form.professional" class="m-2 check-education mr-30" placeholder="专业选择"
+                        size="large">
+                        <el-option v-for="item in majorArr" :key="item.sortId" :label="item.professionalName"
+                            :value="item.sortId" />
+                    </el-select>
+                    <el-cascader v-model="industry" placeholder="意向职位"
+                        :props="{ 'children': 'positionDownList', 'label': 'positionTypeName', 'value': 'positionTypeId' }"
+                        class="check-education mr-30" :options="positionCategoryList" clearable />
+                </div>
+                <div class="filter-wrap-btm">
+                    <div class="check">
+                        <el-cascader v-model="form.city" class="mr-30 check-education m-2" placeholder="意向城市选择"
+                            :options="cityJson" :props="{ 'label': 'name', 'value': 'name' }" clearable />
+                        <el-select v-model="form.wishMoneyLeft" class="m-2 check-salary mr-15" placeholder="期望薪资选择"
+                            size="large">
+                            <el-option v-for="item in wishMoneyLeftList" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                        <span class="fs-14">至</span>
+                        <el-select v-model="form.wishMoneyRight" class="m-2 check-salary ml-15" placeholder="期望薪资选择"
+                            size="large">
+                            <el-option v-for="item in wishMoneyRightList" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                    </div>
+                    <div class="operation">
+                        <el-button type="primary" plain @click="getTalent()">确定</el-button>
+                        <el-button type="info" plain @click="cancelCheck()">清空</el-button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 查询数据内容 -->
+            <div class="wrap data-wrap">
+                <div class="search-tip-wrap">
+                    <span class="fs-14">邀请点数</span>
+                    <span class="fs-16 ml-5 cl-blue">{{ inviationNumber }}</span>
+                    <span class="fs-12 ml-15 cl-ccc">若当日点数用尽，次日凌晨会自动补充新点数</span>
+                </div>
+
+                <!-- 每一项数据 -->
+                <div class="data-item" v-for="item in talentList" :key="item.id">
+
+                    <!--头像-->
+                    <div class="cbleft1">
+                        <el-avatar :size="72" :src="item.userLogoUrl ? item.userLogoUrl : circleUrl" />
+                    </div>
+
+                    <!-- 人名与最高学历 -->
+                    <div class="cbleft2 ml-16">
+                        <p class="name fs-18">{{ item.userName }}</p>
+                        <div class="description mt-16 cl-ccc">
+                            <p class="fs-12">{{ item.userAge }}岁</p>
+                            <div class="line"></div>
+                            <p class="fs-12">{{ item.userEducation }}</p>
+                        </div>
+                    </div>
+
+                    <!-- 教育经历 -->
+                    <div class="cbleft3 ml-48 cl-ccc">
+                        <p class="titlest fs-12 ml-16">教育经历</p>
+                        <template v-for="child in item.userEducationList" :key="child.userId">
+                            <div class="school-name">
+                                <div class="coursor"></div>
+                                <p class="fs-14 ml-12">{{ child.school }}</p>
+                            </div>
+                            <div class="school-description fs-12 ml-16">
+                                <p>{{ child.professional }}</p>
+                                <div class="line"></div>
+                                <p>{{ child.education }}</p>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- 求职意向 -->
+                    <div class="cbleft4 cl-ccc ml-40">
+                        <p class="titlest fs-12 ml-28">求职意向</p>
+                        <div class="occupation-item mt-16">
+                            <img src="@/assets/images/icon-dingwei.png" class="icon">
+                            <p class="description fs-14 ml-12">{{item.wishAddr ? item.wishAddr : '无'}}</p>
+                        </div>
+                        <div class="occupation-item mt-12">
+                            <img src="@/assets/images/icon-bangong.png" class="icon">
+                            <p class="description fs-14 ml-12">{{ item.wishPosition ? item.wishPosition :
+                                    '无'
+                            }}</p>
+                        </div>
+                        <div class="occupation-item mt-16">
+                            <img src="@/assets/images/icon-qianbi.png" class="icon">
+                            <p class="description fs-14 ml-12">{{ item.wishMoney ? getMoney(item.wishMoney) : '3-50k' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 活跃时间 -->
+                    <div class="cbleft5">
+                        <p class="titlest fs-12 cl-ccc">{{ item.lastLoginTime }}活跃</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分页 -->
+            <div class="page-wrap wrap mt-48">
+                <div class="page-content">
+                    <el-pagination v-model:current-page="paging.pageIndex" :background="true" :pager-count="7"
+                        v-model:page-size="paging.pageSize" layout="prev, pager, next" :total="paging.total" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 我邀请的页面 -->
+        <div class="invitation-library-wrap" v-show="checkItem == 1">
+            <div class="container wrap" v-show="!invitationList.length">
+                <!-- 如果没人邀请显示的页面 -->
+                <div class="nolist">
+                    <p class="fs-16 top">暂无学生投递</p>
+                    <p class="fs-16">快去人才库中邀请自己心仪的学生吧</p>
+                </div>
+                <!-- 邀请人才的列表 -->
+            </div>
+            <div class="invitation wrap" v-show="invitationList.length">
+                <!-- 邀请的选择容器 -->
+                <div class="filter-wrap">
+                    <el-select v-model="invitationForm.status" clearable class="m-2 check-sex mr-30" placeholder="状态选择"
+                        size="large">
+                        <el-option v-for="item in statusList" :key="item.value" :label="item.label"
+                            :value="item.value" />
+                    </el-select>
+                    <el-select v-model="invitationForm.positionId" clearable class="m-2 check-position mr-30"
+                        placeholder="意向职位选择" size="large">
+                        <el-option v-for="item in positionArr" :key="item.value" :label="item.label"
+                            :value="item.value" />
+                    </el-select>
+                    <el-button type="primary" class="btn" @click="getInvitaion">确定</el-button>
+                </div>
+
+                <!--邀请的列表-->
+                <div class="list">
+                    <div class="item" v-for="item in invitationList" :key="item.id">
+                        <div class="top">
+                            <div class="left">
+                                <p>投递职位</p>
+                                <div class="line"></div>
+                                <p>{{item.positionName}}</p>
+                            </div>
+                            <div class="right">
+                                <p>发送时间</p>
+                                <div class="line"></div>
+                                <p>{{item.createTime}}</p>
+                            </div>
+                        </div>
+                        <div class="btm">
+
+                            <!--头像-->
+                            <div class="cbleft1">
+                                <el-avatar :size="72" :src="circleUrl" />
+                            </div>
+
+                            <!-- 人名与最高学历 -->
+                            <div class="cbleft2 ml-16">
+                                <p class="name fs-18">{{ item.userName }}</p>
+                                <div class="description mt-16 cl-ccc">
+                                    <p class="fs-12">{{ item.userAge }}岁</p>
+                                    <div class="line"></div>
+                                    <p class="fs-12">{{ item.userEducation }}</p>
+                                </div>
+                            </div>
+
+                            <!-- 教育经历 -->
+                            <div class="cbleft3 ml-48 cl-ccc">
+                                <p class="titlest fs-12 ml-16">教育经历</p>
+                                <template v-for="child in item.userEducationList" :key="child.userId">
+                                    <div class="school-name">
+                                        <div class="coursor"></div>
+                                        <p class="fs-14 ml-12">{{ child.school }}</p>
+                                    </div>
+                                    <div class="school-description fs-12 ml-16">
+                                        <p>{{ child.professional }}</p>
+                                        <div class="line"></div>
+                                        <p>{{ child.education }}</p>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- 求职意向 -->
+                            <div class="cbleft4 cl-ccc ml-40">
+                                <p class="titlest fs-12 ml-28">求职意向</p>
+                                <div class="occupation-item mt-16">
+                                    <img src="@/assets/images/icon-dingwei.png" class="icon">
+                                    <p class="description fs-14 ml-12">{{ item.wishAddr ? item.wishAddr : '无' }}</p>
+                                </div>
+                                <div class="occupation-item mt-12">
+                                    <img src="@/assets/images/icon-bangong.png" class="icon">
+                                    <p class="description fs-14 ml-12">{{  item.wishPosition ? item.wishPosition : '无' }}</p>
+                                </div>
+                                <div class="occupation-item mt-16">
+                                    <img src="@/assets/images/icon-qianbi.png" class="icon">
+                                    <p class="description fs-14 ml-12">{{item.wishMoney ? getMoney(item.wishMoney) : '无' }}</p>
+                                </div>
+                            </div>
+
+                            <!-- 活跃时间 -->
+                            <div class="cbleft5">
+                                <p class="mt-40 fs-18">{{ item.inviteStatus }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 分页 -->
+                <div class="page-wrap wrap mt-48">
+                    <div class="page-content">
+                        <el-pagination v-model:current-page="pagingInvite.pageIndex" :background="true" :pager-count="7"
+                            v-model:page-size="pagingInvite.pageSize" layout="prev, pager, next"
+                            :total="pagingInvite.total" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </el-dialog>
     <!-- 企业详情 -->
     <el-dialog v-model="details" width="30%" align-center title="企业详情">
       <div class="align-center company-detail mt-20">
@@ -908,6 +1319,421 @@ const isShowDetails = function (id: number) {
   .btn-xq {
     color: #f56c6c !important;
   }
+}
+// 这个是邀请人才的样式
+.personnel {
+    position: relative;
+    & .vip{
+        & .btn{
+            margin-top: 20px;
+            text-align: center;
+            padding: 10px 0;
+            background:linear-gradient(128deg,#fee8cd,#e2ae7e);
+        }
+        & .btn:hover{
+            cursor: pointer;
+        }
+    }
+    &>.operation-wrap {
+        background: #fff;
+        &>.operation-container {
+            display: flex;
+            justify-content: center;
+            &>.operation-item {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                &>p {
+                    width: 220px;
+                    text-align: center;
+                    padding: 8px 16px;
+                }
+                &>.span-check {
+                    font-weight: 800;
+                }
+                &>.btm-check {
+                    display: inline-block;
+                    border-radius: 2px;
+                    width: 51px;
+                    height: 3px;
+                    background: #356ffa;
+                }
+            }
+            &>.operation-item:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    // 这个是咨询
+    &>.consulting-service {
+        position: relative;
+        text-align: center;
+        &>.top {
+            padding: 12px 12px 0;
+            box-shadow: 2px 3px 0 rgb(215 214 214 / 50%);
+            &>.or-code {
+                width: 88px;
+            }
+            &>.tip {
+                width: 72px;
+                margin: 0 auto;
+                padding-top: 5px;
+                padding-bottom: 12px;
+                line-height: 16px;
+                text-align: center;
+            }
+        }
+        &>img:hover {
+            cursor: pointer;
+        }
+    }
+    //这个是弹出咨询
+    &>.seek-advice {
+        padding: 10px 10px 6px;
+        &>img {
+            width: 38px;
+        }
+    }
+    &>.seek-advice:hover {
+        cursor: pointer;
+    }
+
+    .absolute-wrap {
+        position: absolute;
+        right: 20px;
+        top: 90px;
+        z-index: 2;
+    }
+
+    &>.talent-pool-wrap {
+        &>.filter-wrap {
+            padding: 32px 0;
+            border-bottom: 1px solid #eef0f2;
+            :deep(.check-sex) {
+                width: 110px;
+            }
+            :deep(.check-salary) {
+                width: 150px;
+            }
+            :deep(.el-input__inner) {
+                height: 40px;
+            }
+
+            &>.filter-wrap-btm {
+                margin-top: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        &>.data-wrap {
+            padding: 24px 0;
+
+            &>.data-item {
+                padding: 32px 0 32px;
+                display: flex;
+                border-bottom: 1px solid #eef0f2;
+
+                &>.cbleft2 {
+                    width: 124px;
+
+                    &>.description {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+
+                &>.cbleft3 {
+                    width: 280px;
+
+                    &>.school-name {
+                        display: flex;
+                        align-items: center;
+
+                        &>.coursor {
+                            width: 4px;
+                            height: 4px;
+                            border-radius: 2px;
+                            background: #c5c8ce;
+                        }
+
+                        &>p {
+                            padding: 12px 0;
+                        }
+                    }
+
+                    &>.school-description {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+
+                &>.cbleft4 {
+                    width: 420px;
+
+                    &>.occupation-item {
+                        display: flex;
+                    }
+                }
+
+                &>.cbleft5 {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+        }
+
+        &>.page-wrap {
+            &>.page-content {
+                display: flex;
+                justify-content: center;
+                padding-bottom: 64px;
+            }
+        }
+    }
+
+    &>.invitation-library-wrap {
+        background-color: #f6f7f9;
+        min-height: calc(100vh - 150px);
+
+        &>.container {
+            height: calc(100vh - 260px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &>.nolist {
+                text-align: center;
+
+                &>img {
+                    width: 243px;
+                }
+
+                &>p {
+                    color: #515a6e;
+                }
+
+                &>.top {
+                    margin: 12px 0 16px;
+                }
+            }
+        }
+
+        &>.invitation {
+            &>.filter-wrap {
+                padding: 35px 0;
+
+                :deep(.btn) {
+                    padding: 18px 26px;
+                }
+            }
+
+            &>.page-wrap {
+                &>.page-content {
+                    display: flex;
+                    justify-content: center;
+                    padding-bottom: 64px;
+                }
+            }
+
+            &>.list {
+                &>.item {
+                    background: #ffff;
+                    padding: 0 22px;
+
+                    &>.top {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 22px 0;
+
+                        &>.left,
+                        &>.right {
+                            display: flex;
+                            align-items: center;
+                        }
+                    }
+
+                    &>.btm {
+                        padding: 32px 0;
+                        display: flex;
+
+                        &>.cbleft2 {
+                            width: 124px;
+
+                            &>.description {
+                                display: flex;
+                                align-items: center;
+                            }
+                        }
+
+                        &>.cbleft3 {
+                            width: 280px;
+
+                            &>.school-name {
+                                display: flex;
+                                align-items: center;
+
+                                &>.coursor {
+                                    width: 4px;
+                                    height: 4px;
+                                    border-radius: 2px;
+                                    background: #c5c8ce;
+                                }
+
+                                &>p {
+                                    padding: 12px 0;
+                                }
+                            }
+
+                            &>.school-description {
+                                display: flex;
+                                align-items: center;
+                            }
+                        }
+
+                        &>.cbleft4 {
+                            width: 420px;
+
+                            &>.occupation-item {
+                                display: flex;
+                            }
+                        }
+
+                        &>.cbleft5 {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog {
+        :deep(& > .el-dialog__body) {
+            padding: 40px;
+        }
+        & .msg-wrap {
+            padding: 20px;
+            background: #f9f9f9;
+            &>.top,
+            &>.btm {
+                display: flex;
+                align-items: center;
+            }
+            &>.btm {
+                padding: 10px 0;
+            }
+            &>.top {
+                &>.btn {
+                    padding: 5px;
+                    background: #e5ebf9;
+                }
+            }
+        }
+
+        & .post-tips {
+            padding: 14px 0;
+        }
+
+        & .invitation-method {
+            padding: 20px 0;
+        }
+        & .invitation {
+            display: flex;
+            padding: 10px 0;
+            align-items: center;
+        }
+    }
+    .ml-30 {
+        margin-left: 30px;
+    }
+
+    .cl-blue {
+        color: #356ffa;
+    }
+
+    .cl-ccc {
+        color: #808695;
+    }
+
+    .ml-16 {
+        margin-left: 16px;
+    }
+
+    .mt-16 {
+        margin-top: 16px;
+    }
+
+    .mt-17 {
+        margin-top: 17px;
+    }
+
+    .ml-48 {
+        margin-left: 48px;
+    }
+
+    .ml-12 {
+        margin-left: 12px;
+    }
+
+    .line {
+        display: inline-block;
+        height: 10px;
+        width: 1px;
+        margin: 0 8px;
+        background: #000;
+    }
+
+    .ml-40 {
+        margin-left: 40px;
+    }
+
+    .icon {
+        width: 18px;
+        height: 18px;
+    }
+    .fs-26 {
+        font-size: 26px;
+    }
+
+    .ml-28 {
+        margin-left: 28px;
+    }
+
+    .mt-12 {
+        margin-top: 12px;
+    }
+
+    .fs-12 {
+        font-size: 12px;
+    }
+
+    .mt-48 {
+        margin-top: 48px;
+    }
+
+    .fw-700 {
+        font-weight: 700;
+    }
+
+    .mt-50 {
+        margin-top: 50px;
+    }
+
+    .cl-black {
+        color: #000;
+    }
+    .icon-31{
+        width: 31px;
+    }
 }
 </style>
 
