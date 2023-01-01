@@ -280,8 +280,8 @@ const isShowDetails = function (id: number) {
     </div>
 
     <candidateMain :companyId="companyId" v-if="activeName == 'first'"></candidateMain>
-    <interviewMain v-if="activeName == 'second'"></interviewMain>
-    <inappropriate v-if="activeName == 'third'"></inappropriate>
+    <interviewMain :companyId="companyId" v-if="activeName == 'second'"></interviewMain>
+    <inappropriate :companyId="companyId"  v-if="activeName == 'third'"></inappropriate>
   </div>
 
 

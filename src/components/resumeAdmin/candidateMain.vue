@@ -129,7 +129,6 @@ import {
 } from "vue";
 import card from "@/components/card/index";
 import { useEnterpriseStore } from "@/stores/enterprise";
-import { useHomeStore } from "@/stores/home";
 let enterprise = useEnterpriseStore();
 let userName = ref("");
 let invitationStatus = ref(false);
@@ -160,6 +159,7 @@ let employment = async (event: Event, item: any) => {
   )
     .then(async () => {
       let res: any = await enterprise.modifyResume({
+        companyId:companyId.value,
         deliveryId: item.deliveryId,
         interviewAddr: item.interviewAddr,
         interviewName: item.interviewName,
@@ -206,6 +206,7 @@ let inviteFrom: any = reactive({
 });
 let inviteInterview = async () => {
   inviteFrom.deliveryId = deliveryId.value;
+  inviteFrom.companyId=companyId.value,
   dialogVisible.value = false;
   let res: any = await enterprise.modifyResume(inviteFrom);
   if (res.code == 200) {
@@ -280,6 +281,7 @@ let batchInappropriate = () => {
       let res: any = await enterprise.modifyResumeStatus({
         deliveryId,
         statusId: 6,
+        companyId:companyId.value,
       });
       if (res.code == 200) {
         ElMessage({
@@ -315,6 +317,7 @@ let batchbyFilter = () => {
       let res: any = await enterprise.modifyResumeStatus({
         deliveryId,
         statusId: 3,
+        companyId:companyId.value,
       });
       if (res.code == 200) {
         ElMessage({
@@ -352,6 +355,7 @@ let inappropriate = (event: Event, item: any) => {
   )
     .then(async () => {
       let res: any = await enterprise.modifyResume({
+        companyId:companyId.value,
         deliveryId: item.deliveryId,
         interviewAddr: item.interviewAddr,
         interviewName: item.interviewName,
@@ -392,6 +396,7 @@ let byFilter = (event: Event, item: any) => {
   })
     .then(async () => {
       let res: any = await enterprise.modifyResume({
+        companyId:companyId.value,
         deliveryId: item.deliveryId,
         interviewAddr: item.interviewAddr,
         interviewName: item.interviewName,
@@ -459,7 +464,9 @@ getStage();
 let allPositions: any = ref([]);
 let positionDropValue = ref();
 let getPositionDrop = async () => {
-  let res: any = await enterprise.getPositionDrop();
+  let res: any = await enterprise.getPositionDrop({
+    companyId:companyId.value
+  });
   if (res.code == 200) {
     allPositions.value = res.data;
   } else {

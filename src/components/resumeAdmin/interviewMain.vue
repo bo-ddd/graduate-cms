@@ -45,10 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref,toRefs } from 'vue'
 import { useEnterpriseStore } from "@/stores/enterprise";
-import { useHomeStore } from '@/stores/home';
-const use = useHomeStore();
+
+let props = defineProps<{ 
+  companyId:number
+}>();
+
+let { companyId } = toRefs(props);
 
 let enterprise = useEnterpriseStore();
 let userName = ref("")
@@ -56,35 +60,28 @@ const tableData = ref([])
 let allPositionDrop: any = ref([]);
 let positionDropValue = ref();
 let getPositionDrop = async () => {
-    let res = await enterprise.getPositionDrop();
+    let res = await enterprise.getPositionDrop({
+        companyId:companyId.value
+    });
     allPositionDrop.value = res.data;
 }
 getPositionDrop();
 
-/****'
- *  
- *  获取企业信息
- * 
- * */
- let companyId:any = ref()
- const getEnterpriseInfo = async () => {
-    const res: any = await use.getEnterprise();
-    if (res.code == 200) {
-        companyId.value = res.data.companyId;
-    }
-}
+
 
 let getResume = async () => {
     let res = await enterprise.getResume({
-        companyId:10000,
+        companyId:companyId.value,
         deliveryStatus: 4,
     });
      tableData.value = res.data.data;
+     console.log(tableData.value);
+     
 }
 
 let fuzzyQuery = async () => {
     let res = await enterprise.getResume({
-        companyId: 10000,
+        companyId: companyId.value,
         deliveryStatus: 4,
         positionId:positionDropValue.value,
         userName:userName.value,
@@ -93,7 +90,6 @@ let fuzzyQuery = async () => {
 }
 
 (async function(){
-       await getEnterpriseInfo();
        await getResume();
     })();
 </script>

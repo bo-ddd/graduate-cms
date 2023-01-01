@@ -21,8 +21,8 @@ export const useEnterpriseStore = defineStore("enterprise", () => {
     return Api.getResume(payload);
   }
 
-  let getPositionDrop = () => {
-    return Api.getPositionDrop({});
+  let getPositionDrop = (payload:{ companyId: number,}) => {
+    return Api.getPositionDrop(payload);
   }
 
   let getStage = (payload: {}) => {
@@ -38,6 +38,7 @@ export const useEnterpriseStore = defineStore("enterprise", () => {
     interviewTime: string,
     positionId: number,
     statusId: number,
+    companyId:number,
   }) => {
     return Api.modifyResume(payload);
   }
@@ -45,6 +46,7 @@ export const useEnterpriseStore = defineStore("enterprise", () => {
   let modifyResumeStatus = (payload: {
     deliveryId: string,
     statusId: number,
+    companyId:number,
   }) => {
     return Api.modifyResumeStatus(payload)
   }

@@ -27,27 +27,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref,toRefs } from 'vue'
 import card from "@/components/card/index";
 import { useEnterpriseStore } from "@/stores/enterprise"
-import { useHomeStore } from '@/stores/home';
 let enterprise = useEnterpriseStore();
-const use = useHomeStore();
 let resumeList:any = ref([]);
 
+let props = defineProps<{ 
+  companyId:number
+}>();
 
-/****'
- *  
- *  获取企业信息
- * 
- * */
- let companyId:any = ref()
- const getEnterpriseInfo = async () => {
-    const res: any = await use.getEnterprise();
-    if (res.code == 200) {
-        companyId.value = res.data.companyId;
-    }
-}
+let { companyId } = toRefs(props);
 
 let getResume = async () => {
     let res:any = await enterprise.getResume({
@@ -67,6 +57,7 @@ let getResume = async () => {
  */
  let recovery = async (item: any) => {
     let res:any = await enterprise.modifyResume({
+        companyId:companyId.value,
         deliveryId: item.deliveryId,
         interviewAddr: item.interviewAddr,
         interviewName: item.interviewName,
@@ -87,10 +78,7 @@ let getResume = async () => {
     }
 }
 
-(async function(){
-       await getEnterpriseInfo();
        await getResume();
-    })();
 </script>
 
 <style lang="scss" scoped>
