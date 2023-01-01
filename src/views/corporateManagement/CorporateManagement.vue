@@ -7,6 +7,21 @@ import { ref } from 'vue';
 import type { Ref } from 'vue';
 import type { Company, CompanyList } from '@/type/Zapi';
 
+/***
+ * 
+ * 简历管理
+ * 
+ */
+import candidateMain from "@/components/resumeAdmin/candidateMain.vue";
+import interviewMain from "@/components/resumeAdmin/interviewMain.vue";
+import inappropriate from "@/components/resumeAdmin/inappropriate.vue";
+let activeName = ref("first");
+
+
+
+
+
+
 const companyStore = useCompany();
 // 企业名称
 let companyFullName :Ref<string> = ref('');
@@ -63,7 +78,7 @@ const getSelectCompanyList = async (params: CompanyList) => {
     const res: Res = await companyStore.getSelectCompany(params);
     console.log(res);
     if (res.code == 200) {
-        tableData.value = res.data;
+        tableData.value = res.data.data;
         tableData.value.forEach((item: TabledateItem, index: number) => {
             let key: keyof any;
             for (key in item) {
@@ -81,16 +96,16 @@ const getSelectCompanyList = async (params: CompanyList) => {
     }
 }
 getSelectCompanyList({
-    companyAddr: '',
-    companyFullName: '',
-    companyIndustryLeft: 0,
-    companyIndustryRight: 0,
-    companyName: '',
-    companyNature: 0,
-    companySize: 0,
-    companyTag: 0,
-    pageIndex: 0,
-    pageSize: 0,
+    // companyAddr: '',
+    // companyFullName: '',
+    // companyIndustryLeft: 0,
+    // companyIndustryRight: 0,
+    // companyName: '',
+    // companyNature: 0,
+    // companySize: 0,
+    // companyTag: 0,
+    pageIndex: 1,
+    pageSize: 10,
     token: '',
 });
 
@@ -114,7 +129,11 @@ const query = ()=>{
 
 //简历管理
 let resume = ref(false);
-const isShowResume = function () {
+let companyId = ref();
+const isShowResume = function (id:number) {
+    companyId.value = id;
+    console.log(companyId.value);
+    
     resume.value = true;
 
 }
@@ -214,7 +233,7 @@ const isShowDetails = function (id: number) {
             <el-table-column label="简历管理" align="center">
                 <template #default="scope">
                     <!-- {{ scope.row.index }} -->
-                    <el-button type="danger" @click="isShowResume()" text class="btn-xq">详情</el-button>
+                    <el-button type="danger" @click="isShowResume(scope.row.companyId)" text class="btn-xq">详情</el-button>
                 </template>
             </el-table-column>
 
@@ -242,10 +261,36 @@ const isShowDetails = function (id: number) {
             </el-table-column>
         </el-table>
 
+
+
+
+
+
         <!-- 简历管理 -->
-        <el-dialog v-model="resume" width="80%" align-center>
+        <el-dialog v-model="resume" class="overf" destroy-on-close width="80%" align-center>
+
+            
+  <div class="resume">
+    <div class="header">
+      <el-tabs class="demo-tabs" v-model="activeName" :stretch="true">
+        <el-tab-pane label="候选人" name="first"></el-tab-pane>
+        <el-tab-pane label="面试管理" name="second"></el-tab-pane>
+        <el-tab-pane label="不合适" name="third"></el-tab-pane>
+      </el-tabs>
+    </div>
+
+    <candidateMain :companyId="companyId" v-if="activeName == 'first'"></candidateMain>
+    <interviewMain :companyId="companyId" v-if="activeName == 'second'"></interviewMain>
+    <inappropriate :companyId="companyId"  v-if="activeName == 'third'"></inappropriate>
+  </div>
+
+
 
         </el-dialog>
+
+
+
+
         <!-- 发布职位 -->
         <el-dialog v-model="position" width="80%" align-center>
 
@@ -303,6 +348,66 @@ const isShowDetails = function (id: number) {
 </template>
 
 <style lang="scss" scoped>
+///简历管理
+
+
+
+.resume {
+  min-height: calc(100vh - 200px);
+  background: #f6f7f9;
+  .header {
+    border-bottom: 1px solid rgb(238, 238, 238);
+    height: 60px;
+    box-shadow: 0px 0px 8px rgb(221, 221, 221);
+    background: white;
+    .demo-tabs {
+      margin-left: 50%;
+      transform: translate(-50%, 0);
+      width: 500px;
+    }
+  }
+}
+:deep(.el-table thead) {
+  height: 60px;
+}
+
+:deep(.candidate-header_bottom > .el-button) {
+  border: none;
+  color: #808695;
+  background: white;
+}
+
+:deep(.el-checkbox) {
+  margin-right: 0px;
+}
+
+:deep(.el-checkbox.el-checkbox--small) {
+  height: 33px;
+}
+
+:deep(.el-tabs__active-bar) {
+  width: 60px !important;
+  left: 40px !important;
+}
+
+:deep(.el-tabs__active-bar) {
+  width: 60px !important;
+  left: 40px !important;
+}
+
+:deep(.el-tabs__item) {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+:deep(.el-tabs__nav) {
+  height: 62px;
+  align-items: center;
+  width: 50px;
+}
+
+
+
 .user {
 
     .input-width {
@@ -354,6 +459,8 @@ const isShowDetails = function (id: number) {
 
 :deep(.el-dialog__body) {
     padding-top: 0 !important;
+    overflow: auto;
+    height: 680px !important;
 }
 
 

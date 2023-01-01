@@ -43,7 +43,7 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'Login',
+      name: 'login',
       component: Login,
     },
     // {
@@ -52,6 +52,15 @@ const router = createRouter({
     //   component: () => import('@/views/register/register.vue'),
     // }
   ]
+})
+
+router.beforeEach( (to) => {
+  const token = sessionStorage.getItem('token');
+  if (to.name == 'login') {
+    return true;
+  } else if (to.name != 'login' && !token) {
+    return { name: 'login' };
+  }
 })
 
 export default router
