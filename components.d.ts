@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     CardItem: typeof import('./src/components/card/cardItem.vue')['default']
     CardWrap: typeof import('./src/components/card/cardWrap.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
+    ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDialog: typeof import('element-plus/es')['ElDialog']

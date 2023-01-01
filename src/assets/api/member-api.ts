@@ -10,4 +10,9 @@ export default{
     getMemberCardList: (params:any):Promise<Res> => {
         return axios.post('/system/selectVipCard', params, postConfig)
     },
+    
+    getPosition: (params:any):any => {
+        return axios.post('/system/getPosition', params, postConfig)
+    },
+    
 }
