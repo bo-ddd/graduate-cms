@@ -58,8 +58,6 @@ const getUserList = async ()=>{
         console.log(res.data.maxCount);
     }
 }
-getUserList();
-// 获取vip列表的方法
 const getVip = async ()=>{
     let res:Res<Vip[]> = await memberShipStore.getVip();
     if(res.code == 200){
@@ -67,6 +65,8 @@ const getVip = async ()=>{
     }
 }
 getVip();
+getUserList();
+// 获取vip列表的方法
 watch(company,()=>{
     getUserList();
 })
@@ -105,7 +105,7 @@ watch(company,()=>{
             <el-table-column prop="overTime" label="到期时间" />
         </el-table>
         <div class="mt-10 just-center">
-            <el-pagination pager-count="7"	v-model:current-page="company.pageIndex"	 v-model:page-size="company.pageSize" :page-sizes="[1,10, 20, 30, 40]"  layout="total, sizes, prev, pager, next, jumper" :total="companyCount"  />
+            <el-pagination :pager-count="7"	v-model:current-page="company.pageIndex" v-model:page-size="company.pageSize" :page-sizes="[1,10, 20, 30, 40]"  layout="total, sizes, prev, pager, next, jumper" :total="companyCount"  />
         </div>
     </div>
 </template>
