@@ -123,8 +123,6 @@ let resume = ref(false);
 let companyId = ref();
 const isShowResume = function (id: number) {
   companyId.value = id;
-  console.log(companyId.value);
-
   resume.value = true;
 };
 //发布职位

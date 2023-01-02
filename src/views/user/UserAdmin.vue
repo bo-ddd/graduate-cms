@@ -13,8 +13,6 @@ let totalCount = ref();
 let tableData = ref();
 let current = ref(1);
 const getUserList = async (value?:number) => {
-    console.log(value);
-    
     let res = await userStore.getSelectUser({
         pageIndex: current.value,
         pageSize:pageSize.value,
@@ -47,8 +45,6 @@ const interviewFn = async (userId:number) => {
     })
    if(res.code){
     interviewList.value = res.data;
-    console.log(interviewList.value.length);
-
     if(interviewList.value.length){
         isInterK.value = false;
     }else{
@@ -146,7 +142,6 @@ const selectUserResume = async (userId: number) => {
     })
     if (res.code == 200) {
         userResume.value = res.data[0];
-        console.log(userResume.value);
     }
 }
 
