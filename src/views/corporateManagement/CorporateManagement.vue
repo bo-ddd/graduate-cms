@@ -72,12 +72,29 @@ const getCompanyIndustryList = async () => {
 getCompanyIndustryList();
 
 // 表格
+// 表格的分页
+let companyPageSize = ref(10);
+let totalCount = ref();
+let current = ref(1);
+
 let tableData = ref();
-const getSelectCompanyList = async (params: CompanyList) => {
-  const res: Res = await companyStore.getSelectCompany(params);
-  console.log(res);
+const getSelectCompanyList = async () => {
+  const res: Res = await companyStore.getSelectCompany({
+    companyAddr: companyAddr.value,
+    companyFullName: companyFullName.value,
+    // companyIndustryLeft: 0,
+    companyIndustryRight: companyIndustryValue.value==''?0: Number(companyIndustryValue.value),
+    companyName: companyName.value,
+    companyNature: natureValue.value==''?0: Number(natureValue.value),
+    companySize: companySizeValue.value==''?0: Number(companySizeValue.value),
+    companyTag: companyTagValue.value==''?0: Number(companyTagValue.value),
+    pageIndex: current.value,
+  pageSize:companyPageSize.value,
+  });
+  console.log('res',res);
   if (res.code == 200) {
     tableData.value = res.data.data;
+    totalCount.value = res.data.maxCount;
     tableData.value.forEach((item: TabledateItem, index: number) => {
       let key: keyof any;
       for (key in item) {
@@ -91,38 +108,14 @@ const getSelectCompanyList = async (params: CompanyList) => {
       }
       Object.assign(item, { index: index + 1 });
     });
-    console.log(tableData.value);
   }
 };
-getSelectCompanyList({
-  // companyAddr: '',
-  // companyFullName: '',
-  // companyIndustryLeft: 0,
-  // companyIndustryRight: 0,
-  // companyName: '',
-  // companyNature: 0,
-  // companySize: 0,
-  // companyTag: 0,
-  pageIndex: 1,
-  pageSize: 10,
-  token: "",
-});
+getSelectCompanyList();
 
-// 查询
+// 查询------
 const query = () => {
-  getSelectCompanyList({
-    companyAddr: companyAddr.value,
-    companyFullName: companyFullName.value,
-    companyIndustryLeft: 0,
-    companyIndustryRight: 0,
-    companyName: companyName.value,
-    companyNature: 0,
-    companySize: 0,
-    companyTag: 0,
-    pageIndex: 0,
-    pageSize: 0,
-    token: "",
-  });
+  console.log(companyIndustryValue.value);
+  getSelectCompanyList();
 };
 
 //简历管理
@@ -484,7 +477,13 @@ const getMoney: (data: string) => string = (data: string) => {
         </template>
       </el-table-column>
 
-      <el-table-column prop="companyIndustry" label="所属行业" align="center" />
+      <el-table-column label="所属行业" align="center" >
+        <template #default="scope">
+          <div>
+            <a :title="scope.row.companyIndustry" class="companyIndustry text-el ">{{ scope.row.companyIndustry }}</a>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="发布职位" align="center">
         <template #default="scope">
           <!-- {{ scope.row.index }} -->
@@ -496,8 +495,8 @@ const getMoney: (data: string) => string = (data: string) => {
           >详情</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="vipLevel" label="会员等级" align="center" />
-      <el-table-column prop="companyRegisterAddr" label="注册地区" align="center" />
+      <el-table-column prop="vipName" label="会员等级" align="center" />
+      <el-table-column prop="companyAddr" label="注册地区" align="center" />
       <el-table-column label="邀请人才" align="center">
         <template #default="scope">
           <!-- {{ scope.row.index }} -->
@@ -999,12 +998,8 @@ const getMoney: (data: string) => string = (data: string) => {
       </div>
     </el-dialog>
 
-    <el-pagination
-      class="mt-10"
-      :page-sizes="[100, 200, 300, 400]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
-    />
+    <el-pagination class="mt-10" @current-change="getSelectCompanyList" @size-change="getSelectCompanyList"   v-model:page-size="companyPageSize" v-model:current-page="current" :page-sizes="[10, 20, 40, 60]"
+                layout="total, sizes, prev, pager, next, jumper" :total="totalCount" />
   </div>
 </template>
 
@@ -1116,8 +1111,6 @@ const getMoney: (data: string) => string = (data: string) => {
   height: 680px !important;
 }
 //职位列表
-.position-dialog {
-}
 .position-page {
   .position-header {
     height: 55px;
@@ -1322,6 +1315,11 @@ const getMoney: (data: string) => string = (data: string) => {
       }
     }
   }
+}
+.companyIndustry{
+  display: block;
+  text-align: left !important;
+  width: 100px;
 }
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   /* Webkit内核兼容CSS选择器样式 放到这里 */
