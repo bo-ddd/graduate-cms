@@ -146,7 +146,10 @@ const isShowPosition = function (companyId: number) {
 const tab = function (num: number) {
   currentIndex.value = num;
 };
+//修改职位状态
+let setPositionStatus=()=>{
 
+}
 //获取在招分页页面的数据
 let getPositionInfo = () => {
   getPositionList();
@@ -584,7 +587,7 @@ const getMoney: (data: string) => string = (data: string) => {
                         <div class="align-center fs-14">
                           <div>{{item.positionNature==0?'全职':'实习'}}</div>
                           <div class="bor"></div>
-                          <div>大专</div>
+                          <div>{{item.positionEducationName}}</div>
                           <div class="bor"></div>
                           <div>{{item.positionAddr.split(',')[0]}}</div>
                           <div class="bor"></div>
@@ -600,6 +603,17 @@ const getMoney: (data: string) => string = (data: string) => {
                       <div class="resume-box cur-po">
                         <div class="resume-num">{{item.resumeCount}}</div>
                         <div class="mt-10 fs-14">总简历</div>
+                      </div>
+                    </div>
+                    
+                    <div class="refresh-info align-center">
+                      <div v-if="item.positionStatus2=='0'">
+                      <el-button color="">通过</el-button>
+                      <el-button class="ml-10" @click="setPositionStatus" color="">不通过</el-button>
+                      </div>
+                      <div v-else>
+                      <span v-if="item.positionStatus2=='1'" class="fs-14">已通过</span>
+                      <span v-if="item.positionStatus2=='2'" class="fs-14 fc-red">未通过</span>
                       </div>
                     </div>
                   </div>
@@ -652,7 +666,7 @@ const getMoney: (data: string) => string = (data: string) => {
                           <div class="align-center fs-14">
                             <div>{{item.positionNature==0?'全职':'实习'}}</div>
                             <div class="bor"></div>
-                            <div>大专</div>
+                            <div>{{item.positionEducationName}}</div>
                             <div class="bor"></div>
                             <div>{{item.positionAddr.split(',')[0]}}</div>
                             <div class="bor"></div>
@@ -669,6 +683,19 @@ const getMoney: (data: string) => string = (data: string) => {
                           <div class="resume-num">{{item.resumeCount}}</div>
                           <div class="mt-10 fs-14">总简历</div>
                         </div>
+                      </div>
+                      <div>
+                        
+                    <div class="refresh-info align-center">
+                      <div v-if="item.positionStatus2=='0'">
+                      <el-button color="">通过</el-button>
+                      <el-button class="ml-10" @click="setPositionStatus" color="">不通过</el-button>
+                      </div>
+                      <div v-else>
+                      <span v-if="item.positionStatus2=='1'" class="fs-14">已通过</span>
+                      <span v-if="item.positionStatus2=='2'" class="fs-14 fc-red">未通过</span>
+                      </div>
+                    </div>
                       </div>
                     </div>
                   </div>
@@ -1190,6 +1217,9 @@ const getMoney: (data: string) => string = (data: string) => {
         }
         .cur-po:hover {
           color: #356ffa;
+        }
+        .fc-red{
+          color: red;
         }
       }
     }
