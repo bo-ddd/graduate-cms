@@ -11,8 +11,13 @@ export const useLoginStores = defineStore('member', () => {
      * @returns smsCode (string, optional): 验证码,
      */
     function login(params: any) {
-        return Api.getLogin(params) as any
+        return Api.getLogin(params)
+    }
+    // 获取验证码接口
+    // type ：1 = 登录  0 = 修改密码
+    function sendSms(params: any) {
+        return Api.getsendSmsApi(params)
     }
 
-    return { login }
+    return { login, sendSms }
 })

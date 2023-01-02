@@ -55,54 +55,36 @@
                         </el-tab-pane>
                     </div>
                 </el-tabs>
+                
                 <div v-else>
-                    <el-tabs v-model="activeName2" class="demo-tabs" @tab-click="handleClick2">
-                        <el-tab-pane label="手机号验证" name="手机号验证">
-                            <div class="form_box">
-                                <div class="form_input">
-                                    <div class="mt-15">
-                                        <el-input @input="yhminput(form.setpswd.phone)"
-                                            @change="yhmchange(form.setpswd.phone)" v-model="form.setpswd.phone"
-                                            placeholder="请输入用户名" maxlength="11" minlength="11" />
-                                        <div v-show="yhmCheck" class="checkInfo">{{ yhmCheckVal }}</div>
-                                    </div>
-                                    <div class="mt-15">
-                                        <div class="just-center">
-                                            <el-input @input="yzminput(form.setpswd.smsCode)"
-                                                @change="yzmchange(form.setpswd.smsCode)" v-model="form.setpswd.smsCode"
-                                                placeholder="请输入验证码" maxlength="6" type="text" />
-                                            <el-button class="bgc-button ml-10" @click="hqyzm"
-                                                :disabled="isdisabled">{{ yzmButton }}</el-button>
-                                        </div>
-                                        <div v-show="yzmCheck" class="checkInfo">{{ yzmCheckVal }}</div>
-                                    </div>
-                                </div>
-                                <div class="form_submit mt-15">
-                                    <el-button type="primary" @click="yzmok">确定</el-button>
-                                </div>
+                    <div class="form_box">
+                        <div class="form_input">
+                            <div class="mt-15">
+                                <el-input @input="yhminput(form.setpswd.phone)" @change="yhmchange(form.setpswd.phone)"
+                                    v-model="form.setpswd.phone" placeholder="请输入用户名" maxlength="11" minlength="11" />
+                                <div v-show="yhmCheck" class="checkInfo">{{ yhmCheckVal }}</div>
                             </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="重置密码" name="重置密码">
-                            <div class="form_box">
-                                <div class="form_input">
-                                    <div class="mt-15">
-                                        <el-input @input="pswdinput(form.setpswd.password)"
-                                            @change="pswdchange(form.setpswd.password)" v-model="form.setpswd.password"
-                                            placeholder="请输入密码" maxlength="20" minlength="6" />
-                                        <div v-show="pswdCheck" class="checkInfo">{{ pswdCheckVal }}</div>
-                                    </div>
-                                    <div class="mt-15">
-                                        <el-input @input="" @change="" v-model="password2" placeholder="确认密码"
-                                            maxlength="20" minlength="6" />
-                                        <div v-show="pswdCheck2" class="checkInfo">{{ pswdCheckVal2 }}</div>
-                                    </div>
+                            <div class="mt-15">
+                                <div class="just-center">
+                                    <el-input @input="yzminput(form.setpswd.smsCode)"
+                                        @change="yzmchange(form.setpswd.smsCode)" v-model="form.setpswd.smsCode"
+                                        placeholder="请输入验证码" maxlength="6" type="text" />
+                                    <el-button class="bgc-button ml-10" @click="hqyzm"
+                                        :disabled="isdisabled">{{ yzmButton }}</el-button>
                                 </div>
-                                <div class="form_submit mt-15">
-                                    <el-button type="primary" @click="setPassword">修改</el-button>
-                                </div>
+                                <div v-show="yzmCheck" class="checkInfo">{{ yzmCheckVal }}</div>
                             </div>
-                        </el-tab-pane>
-                    </el-tabs>
+                            <div class="mt-15">
+                                <el-input @input="pswdinput(form.setpswd.password)"
+                                    @change="pswdchange(form.setpswd.password)" v-model="form.setpswd.password"
+                                    placeholder="请输入密码" maxlength="20" minlength="6" />
+                                <div v-show="pswdCheck" class="checkInfo">{{ pswdCheckVal }}</div>
+                            </div>
+                        </div>
+                        <div class="form_submit mt-15">
+                            <el-button type="primary" @click="yzmok">确定</el-button>
+                        </div>
+                    </div>
                 </div>
             </el-form>
         </div>
@@ -144,10 +126,8 @@ const isLoginStillIs = ref(true);
 const isdisabled = ref(true);
 // num 是获取验证码按钮的倒计时
 const num = ref(30);
-// 
 const yzmButton = ref('获取验证码');
 const activeName = ref('密码登录');
-const activeName2 = ref('手机号验证');
 // yhmCheck 判断用户名校验提示的打开与关闭的
 const yhmCheck = ref(false);
 // yhmCheckVal 用户名校验提示信息
@@ -156,25 +136,17 @@ const yhmCheckVal = ref('');
 const pswdCheck = ref(false);
 // pswdCheckVal 密码校验提示信息
 const pswdCheckVal = ref('');
-// pswdCheck2 判断二次输入密码校验提示的打开与关闭的
-const pswdCheck2 = ref(false);
-// pswdCheckVal2 二次输入密码校验提示信息
-const pswdCheckVal2 = ref('');
-// 二次输入密码绑定的
-const password2 = ref('');
 // yzmCheck 校验验证码提示信息是否展示的
 const yzmCheck = ref(false);
 // yzmCheckVal 校验验证码提示信息的
 const yzmCheckVal = ref('');
-
-
 // 密码登录页面的 忘记密码按钮事件
 function navWjmm() {
     form.yzm.phone = '';
     form.yzm.smsCode = '';
     isLoginStillIs.value = false;
     removeFome()
-}
+};
 // 实时验证用户名长度
 function yhminput(data: any) {
     if (data.length == 11) {
@@ -184,45 +156,42 @@ function yhminput(data: any) {
     } else if (data.length < 11) {
         isdisabled.value = true;
     }
-}
+};
 // 失去焦点验证用户名长度
 function yhmchange(data: any) {
     if (data.length < 11) {
         yhmCheck.value = true;
         yhmCheckVal.value = '用户名不能小于11位！';
     }
-}
+};
 // 实时验证密码长度
 function pswdinput(data: any) {
     if (data.length == 6) {
         pswdCheck.value = false;
         pswdCheckVal.value = '';
     }
-}
+};
 // 失去焦点验证密码长度
 function pswdchange(data: any) {
     if (data.length < 6) {
         pswdCheck.value = true;
         pswdCheckVal.value = '密码不能小于6位！';
     }
-}
+};
 // 实时验证验证码长度
 function yzminput(data: any) {
     if (data.length == 4) {
         yzmCheck.value = false;
         yzmCheckVal.value = '';
     }
-}
+};
 // 失去焦点验证验证码长度
 function yzmchange(data: any) {
     if (data.length < 4) {
         yzmCheck.value = true;
         yzmCheckVal.value = '密码不能小于4位！';
     }
-}
-
-
-
+};
 // 标签页点击事件
 const handleClick = (tab: TabsPaneContext, event: Event) => {
     if (activeName.value == '验证码登录' || activeName.value == '密码登录') {
@@ -233,7 +202,7 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
         yzmCheck.value = false;
         yzmCheckVal.value = '';
     }
-}
+};
 // 获取验证码
 function hqyzm() {
     // 获取验证码按钮是否禁用的
@@ -253,7 +222,7 @@ function hqyzm() {
             yzmButton.value = `获取验证码`;
         }
     }, 1000)
-}
+};
 // psdFormCheck 密码登录的校验
 const psdFormCheck = function (form: psdLoginType) {
     let res: MessageProps = {
@@ -278,7 +247,7 @@ const psdFormCheck = function (form: psdLoginType) {
         res.message = '登录成功';
     };
     return res;
-}
+};
 // yzmFormCheck 验证码登录的校验
 const yzmFormCheck = function (form: yzmLoginType) {
     let res: MessageProps = {
@@ -303,7 +272,7 @@ const yzmFormCheck = function (form: yzmLoginType) {
         res.message = '登录成功';
     };
     return res;
-}
+};;
 // psdSubmit 点击密码登录按钮的方法
 const psdSubmit = function () {
     let res = psdFormCheck(form.psd as psdLoginType);
@@ -325,39 +294,10 @@ const yzmSubmit = function () {
         ElMessage.warning(res.message)
     }
 };
-// 修改密码第一步确定按钮的方法
+// 修改密码确定按钮的方法
 const yzmok = function () {
-    if (form.setpswd.phone == '' || form.setpswd.phone == null || form.setpswd.phone == undefined) {
-        ElMessage.warning('用户名不能为空！')
-        return;
-    } else if (form.setpswd.phone.length) {
-        if (form.setpswd.phone.length < 11) {
-            ElMessage.warning('用户名不能小于11位！')
-            return;
-        }
-    } else if (form.setpswd.smsCode.length < 4) {
-        ElMessage.warning('验证码不能小于4位！')
-        return;
-    } else if (form.setpswd.smsCode == '' || form.setpswd.smsCode == null || form.setpswd.smsCode == undefined) {
-        ElMessage.warning('验证码不能为空！');
-        return;
-    }
-    if (form.setpswd.phone.length == 11) {
-        if (form.setpswd.smsCode.length == 4) {
-            activeName2.value = '重置密码';
-        }
-    }
+    setPassword();
 };
-const handleClick2 = (tab: TabsPaneContext, event: Event) => {
-    if (activeName2.value == '验证码登录' || activeName2.value == '密码登录') {
-        yhmCheck.value = false;
-        yhmCheckVal.value = '';
-        pswdCheck.value = false;
-        pswdCheckVal.value = '';
-        yzmCheck.value = false;
-        yzmCheckVal.value = '';
-    }
-}
 // 修改密码的校验
 function setPsdCheck(params: setPsdType) {
     let res: MessageProps = {
@@ -365,21 +305,18 @@ function setPsdCheck(params: setPsdType) {
         type: 'warning'
     };
     if (params.phone == '' || params.phone == undefined) {
-        res.message = `手机号不能为空!`;
+        res.message = `用户名不能为空!`;
         return res;
     } else if (params.password == '' || params.password == undefined) {
         res.message = `密码不能为空!`;
         return res;
-    } else if (params.password != password2.value) {
-        res.message = '两次输入密码不一致';
-        return res;
     } else if (params.phone.length < 11 || params.phone.length > 11) {
-        res.message = `手机号不能少于11位!`;
+        res.message = `用户名不能少于11位!`;
         return res;
     } else if (params.smsCode == "" || params.smsCode == undefined) {
         res.message = `验证码不能为空!`;
         return res;
-    } else if (params.password.length < 6 || params.smsCode.length > 20) {
+    } else if (params.password.length < 6 || params.password.length > 20) {
         res.message = `密码不能少于6位且不能大于20位!`;
         return res;
     } else if (params.smsCode.length < 4 || params.smsCode.length > 6) {
@@ -390,10 +327,10 @@ function setPsdCheck(params: setPsdType) {
         res.message = '登录成功';
     };
     return res;
-}
+};
 // 登录的方法
 async function login(params: psdLoginType | yzmLoginType) {
-    const res = await use.login(params);
+    const res: any = await use.login(params);
     if (res.data) {
         sessionStorage.setItem('token', res.data);
         let num = 1;
@@ -409,7 +346,7 @@ async function login(params: psdLoginType | yzmLoginType) {
     } else {
         ElMessage.warning(res.msg)
     }
-}
+};
 // 修改密码的方法
 async function setPassword() {
     form.setpswd.loginType = 3;
@@ -419,24 +356,24 @@ async function setPassword() {
         if (res.data) {
             sessionStorage.setItem('token', res.data);
             let num = 1;
-            ElMessage.success('登录成功！');
+            ElMessage.success('修改成功！');
             let timer = setInterval(() => {
                 num--;
                 if (num == 0) {
                     clearInterval(timer)
                     nav('/userAdmin');
-                    removeFome()
+                    removeFome();
                 }
-            }, 1000)
+            }, 1000);
         }
     } else {
         ElMessage.warning(checkRes.message);
     }
-}
+};
 // 跳转页面的方法
 const nav = (name: string) => {
     router.push(name);
-}
+};
 // 格式化form表单
 function removeFome() {
     form.psd.loginType = NaN;
@@ -455,7 +392,7 @@ function removeFome() {
     pswdCheckVal.value = '';
     yzmCheck.value = false;
     yzmCheckVal.value = '';
-}
+};
 </script>
 
 <style scoped lang="scss">
