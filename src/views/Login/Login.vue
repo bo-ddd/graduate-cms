@@ -55,7 +55,7 @@
                         </el-tab-pane>
                     </div>
                 </el-tabs>
-                
+
                 <div v-else>
                     <div class="form_box">
                         <div class="form_input">
@@ -69,7 +69,7 @@
                                     <el-input @input="yzminput(form.setpswd.smsCode)"
                                         @change="yzmchange(form.setpswd.smsCode)" v-model="form.setpswd.smsCode"
                                         placeholder="请输入验证码" maxlength="6" type="text" />
-                                    <el-button class="bgc-button ml-10" @click="hqyzm"
+                                    <el-button class="bgc-button ml-10" @click="hqyzm2"
                                         :disabled="isdisabled">{{ yzmButton }}</el-button>
                                 </div>
                                 <div v-show="yzmCheck" class="checkInfo">{{ yzmCheckVal }}</div>
@@ -140,6 +140,15 @@ const pswdCheckVal = ref('');
 const yzmCheck = ref(false);
 // yzmCheckVal 校验验证码提示信息的
 const yzmCheckVal = ref('');
+
+// 获取验证码接口
+async function getSendSms(params: any) {
+    // type=0 修改密码   type=1 登录
+    const res: any = await use.sendSms({
+        iphone: params.phone,
+        smsType: params.type
+    })
+}
 // 密码登录页面的 忘记密码按钮事件
 function navWjmm() {
     form.yzm.phone = '';
@@ -205,13 +214,39 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 };
 // 获取验证码
 function hqyzm() {
+    num.value = 30;
     // 获取验证码按钮是否禁用的
     isdisabled.value = true;
+    let params = {
+        type: 1,
+        phone: form.yzm.phone
+    }
     // 获取验证码的接口
-
+    getSendSms(params)
     // 获取验证码的接口完成
-
-
+    yzmButton.value = `请在30秒后重新获取`;
+    let timer = setInterval(() => {
+        num.value--;
+        yzmButton.value = `请在${num.value}秒后重新获取`;
+        if (num.value == 0) {
+            clearInterval(timer)
+            isdisabled.value = false;
+            yzmButton.value = `获取验证码`;
+        }
+    }, 1000)
+};
+// 修改密码的获取验证码
+function hqyzm2() {
+    num.value = 30;
+    // 获取验证码按钮是否禁用的
+    isdisabled.value = true;
+    let params = {
+        type: 1,
+        phone: form.setpswd.phone
+    }
+    // 获取验证码的接口
+    getSendSms(params)
+    // 获取验证码的接口完成
     yzmButton.value = `请在30秒后重新获取`;
     let timer = setInterval(() => {
         num.value--;
