@@ -123,8 +123,6 @@ let resume = ref(false);
 let companyId = ref();
 const isShowResume = function (id: number) {
   companyId.value = id;
-  console.log(companyId.value);
-
   resume.value = true;
 };
 //发布职位
@@ -640,7 +638,7 @@ const getMoney: (data: string) => string = (data: string) => {
                   <div class="job-head2 just-between">
                     <div></div>
                   </div>
-                  <div class="job-box" v-for="item in downPositionList" :key="item.userId">
+                  <div class="job-box" v-for="item in downPositionList" :key="item.positionId">
                     <div class="info-job just-between">
                       <div class="job-title fs-18">
                         <div class="mb-15 align-center">

@@ -500,7 +500,14 @@ let getResume = async () => {
     pageIndex: currentPage.value,
     pageSize: pageSize.value,
     companyId:companyId.value,
+
+    deliveryStatus: stageValue.value,
+    educationId: educationValue.value,
+    positionId: positionDropValue.value,
+    userName: userName.value,
+    invitationStatus: invitationStatus.value,
   });
+    
   if (res.code == 200) {
     total.value = res.data.maxCount;
     cardList.value = res.data.data;
@@ -512,7 +519,7 @@ let getResume = async () => {
   }
 };
 
-getResume();
+
 /**
  * 模糊查询
  */
@@ -532,16 +539,18 @@ let fuzzyQuery = async () => {
       message: "success",
       type: "success",
     });
+    total.value = res.data.maxCount;
     cardList.value = res.data.data;
     cities.value = cardList.value.map((item: any) => {
       return item.deliveryId;
     });
-
   } else {
     ElMessage.error("this is a error message.");
   }
-  return res
 };
+
+
+
 
 //进入页面获取positionType
 // async function searchPositionType() {
@@ -554,10 +563,11 @@ let fuzzyQuery = async () => {
 //     return getResume()
 //   }
 // }
+console.log("重新加载页面了嘛");
 
-// (async function () {
-//   await searchPositionType();
-// })();
+(async function () {
+  getResume();
+})();
 </script>
 
 <style lang="scss" scoped>
