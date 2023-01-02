@@ -75,8 +75,6 @@ let getResume = async () => {
         deliveryStatus: 4,
     });
      tableData.value = res.data.data;
-     console.log(tableData.value);
-     
 }
 
 let fuzzyQuery = async () => {
