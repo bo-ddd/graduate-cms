@@ -309,7 +309,20 @@ const selectUserOpinion = async (userId: number) => {
             <el-tabs @tab-change="userStarFn" :model-value="collectionName" tab-position="top" style="height: 500px;overflow: auto;"
                 class="demo-tabs">
                 <el-tab-pane label="企业" name="企业">
-                    <el-empty description="description" />
+                    <!-- 企业收藏 -->
+
+                    <div class="collectionComponey-box" v-for="item in cardList">
+                        <div>
+                            <img :src="item.companyLogoUrl" alt="">
+                        </div>
+                        <div class="flex-collection">
+                            <div>{{ item.companyName }}</div>
+                            <div>{{ item.companyAddr }} | {{ item.companySize  }}人以上</div>
+                            <div>热招<span class="color-blue pl-10">{{ item.companyPositionCount }}</span>个职位</div>
+                        </div>
+                    </div>
+
+
                 </el-tab-pane>
                 <el-tab-pane label="职位" name="职位">
                          <div class="positionItem mt-10" v-for="item in cardList">
@@ -368,6 +381,33 @@ const selectUserOpinion = async (userId: number) => {
     border-radius: 6px;
     text-align: center;
     background-color: rgb(243, 243, 243);
+}
+
+
+.color-blue{
+  color: rgb(23, 81, 182);
+}
+
+.flex-collection{
+    display: flex;
+    flex-direction: column;
+    gap: 10px 0;
+}
+
+.collectionComponey-box{
+    padding: 10px;
+    width: 50%;
+    display: flex;
+    gap: 10px 50px;
+    background-color: white;
+    margin: 20px auto;
+    border-radius: 5px;
+}
+
+.collectionComponey-box img{
+   height: 100%;
+   width: 80px;
+   padding: 0 5px;
 }
 
 .empty{
