@@ -532,6 +532,7 @@ let fuzzyQuery = async () => {
       message: "success",
       type: "success",
     });
+    total.value = res.data.maxCount;
     cardList.value = res.data.data;
     cities.value = cardList.value.map((item: any) => {
       return item.deliveryId;
