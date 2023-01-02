@@ -236,7 +236,13 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 }
 // 获取验证码
 function hqyzm() {
+    // 获取验证码按钮是否禁用的
     isdisabled.value = true;
+    // 获取验证码的接口
+
+    // 获取验证码的接口完成
+
+
     yzmButton.value = `请在30秒后重新获取`;
     let timer = setInterval(() => {
         num.value--;

@@ -12,7 +12,7 @@
         <el-button class="find-btn" type="primary" @click="search">查询</el-button>
       </div>
     </div>
-    <el-table :data="memberCardData" style border>
+    <el-table :data="memberCardData" border>
       <el-table-column prop="vipLevel" fixed label="序号" width="100" align="center" />
       <el-table-column prop="vipName" fixed label="会员卡名称" width="100" align="center" />
       <el-table-column prop="vipPrice" label="价格" width="100" align="center" />
@@ -81,5 +81,6 @@ onMounted(() => {
     }
   }
 }
+
 </style>
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive,ref ,type Ref,watch} from "vue";
+import { reactive,ref ,type Ref,watch,onMounted} from "vue";
 import { useMemberShipManage } from "@/stores/membershipManagement";
 import type { SelectVip } from "@/type/User";
 let memberShipStore = useMemberShipManage();//接口的仓库
@@ -22,7 +22,7 @@ interface Company{
     sortId: number;
     userId: number;
     vipLevel: number;
-    vipLevelName?:string,
+    vipName:string,
 }
 let company = reactive<SelectVip>({
     pageSize:10,
@@ -42,20 +42,13 @@ const getUserList = async ()=>{
         obj[key] = company[key];
       }
     }
-    console.log(obj);
     let res:Res<{
       data:Company[];
       maxCount:number;
     }> = await memberShipStore.getUserList(obj);
     if(res.code == 200){
-        tableData.value = (res.data).data.map(item=>{
-            return {
-                ...item,
-                vipLevelName:vipList.value[item.vipLevel-1].vipName,
-            }
-        });
+        tableData.value = (res.data).data;
         companyCount.value = res.data.maxCount;
-        console.log(res.data.maxCount);
     }
 }
 const getVip = async ()=>{
@@ -66,6 +59,7 @@ const getVip = async ()=>{
 }
 getVip();
 getUserList();
+
 // 获取vip列表的方法
 watch(company,()=>{
     getUserList();
@@ -99,7 +93,7 @@ watch(company,()=>{
             <el-table-column prop="companyId" label="公司id" />
             <el-table-column prop="companyName" label="公司名称" />
             <el-table-column prop="companyFullName" label="品牌名称" />
-            <el-table-column prop="vipLevelName" label="会员等级" />
+            <el-table-column prop="vipName" label="会员等级" />
             <el-table-column prop="companyIndustry" label="所属行业" />
             <el-table-column prop="buyMonth" label="购买月数" />
             <el-table-column prop="overTime" label="到期时间" />
