@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useCompany } from "@/stores/company";
-import type { CompanyDetail, TabledateItem } from "@/type/Company";
+import type { CompanyDetail, ModifyStatus, TabledateItem } from "@/type/Company";
 import type { Industry, Nature } from "@/type/CorporateManagement";
 import type { Res } from "@/type/Res";
 import { ref,reactive,watch } from "vue";
@@ -82,7 +82,6 @@ const getSelectCompanyList = async () => {
   const res: Res = await companyStore.getSelectCompany({
     companyAddr: companyAddr.value,
     companyFullName: companyFullName.value,
-    // companyIndustryLeft: 0,
     companyIndustryRight: companyIndustryValue.value==''?0: Number(companyIndustryValue.value),
     companyName: companyName.value,
     companyNature: natureValue.value==''?0: Number(natureValue.value),
@@ -111,6 +110,43 @@ const getSelectCompanyList = async () => {
   }
 };
 getSelectCompanyList();
+
+// 审核公司
+let centerDialogVisible:Ref<boolean> = ref(false);
+let company:Ref<number> = ref(0);
+
+const modifyStatus = async(params:ModifyStatus)=>{
+  const res :Res = await usePosition.modifyStatus(params);
+}
+const isStatus= (params:ModifyStatus)=>{
+  console.log(params);
+  company.value = params.companyId;
+  centerDialogVisible.value = true;
+}
+const adopt = ()=>{
+  centerDialogVisible.value = false;
+  modifyStatus({
+    companyId: company.value,
+    statusId:1,
+  });
+  ElMessage({
+        type: "success",
+        message: "审核通过",
+      });
+  getSelectCompanyList();
+}
+const fail = ()=>{
+  centerDialogVisible.value = false;
+  modifyStatus({
+    companyId: company.value,
+    statusId:2,
+  });
+  ElMessage({
+        type: "warning",
+        message: "审核未通过",
+      });
+  getSelectCompanyList();
+}
 
 // 查询------
 const query = () => {
@@ -147,7 +183,7 @@ const tab = function (num: number) {
   currentIndex.value = num;
 };
 //修改职位状态
-let setPositionStatus=async(id:number,status:number)=>{
+let setPositionStatus = async(id:number,status:number)=>{
  ElMessageBox.confirm(
       `确认审核${status==1?'通过':'不通过'}？`,
       "提示",
@@ -489,8 +525,20 @@ const getMoney: (data: string) => string = (data: string) => {
     <el-table :data="tableData" height="420" style="width: 100%">
       <el-table-column prop="index" label="序号" align="center" />
       <el-table-column prop="companyId" label="企业id" align="center" />
-      <el-table-column prop="companyFullName" label="企业名称" align="center" />
-      <el-table-column prop="companyName" label="品牌名称" align="center" />
+      <el-table-column prop="companyFullName" label="企业名称" align="center" >
+        <template #default="scope">
+          <div>
+            <a :title="scope.row.companyFullName" class="company-name text-el ">{{ scope.row.companyFullName }}</a>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="companyName" label="品牌名称" align="center" >
+        <template #default="scope">
+          <div>
+            <a :title="scope.row.companyName" class="company-name text-el ">{{ scope.row.companyName }}</a>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="简历管理" align="center">
         <template #default="scope">
           <!-- {{ scope.row.index }} -->
@@ -501,7 +549,7 @@ const getMoney: (data: string) => string = (data: string) => {
       <el-table-column label="所属行业" align="center" >
         <template #default="scope">
           <div>
-            <a :title="scope.row.companyIndustry" class="companyIndustry text-el ">{{ scope.row.companyIndustry }}</a>
+            <a :title="scope.row.companyIndustry" class="company-industry text-el ">{{ scope.row.companyIndustry }}</a>
           </div>
         </template>
       </el-table-column>
@@ -535,7 +583,31 @@ const getMoney: (data: string) => string = (data: string) => {
           >详情</el-button>
         </template>
       </el-table-column>
+      <el-table-column label="审核状态" align="center">
+        <template #default="scope">
+          <!-- {{ scope.row.index }} -->
+          <el-button v-show="scope.row.isApproved == 0"
+            type="primary"
+            @click="isStatus({companyId:scope.row.companyId,statusId:scope.row.isApproved })"
+          >审核</el-button>
+          <p class="c-03ba0c" v-show="scope.row.isApproved==1">通过</p>
+          <p class="c-ff4400" v-show="scope.row.isApproved==2">未通过</p>
+        </template>
+      </el-table-column>
     </el-table>
+
+    <!-- 审核公司 -->
+    <el-dialog class="el-dialog_company"
+    v-model="centerDialogVisible"
+    title="审核"
+    width="30%"
+    align-center
+  >
+  <div class="flex-ja-center mt-20 company">
+    <el-button type="primary" @click="adopt">通过</el-button>
+  <el-button type="danger" @click="fail">不通过</el-button>
+  </div>
+  </el-dialog>
 
     <!-- 简历管理 -->
     <el-dialog v-model="resume" class="overf" destroy-on-close width="80%" align-center>
@@ -1154,6 +1226,12 @@ const getMoney: (data: string) => string = (data: string) => {
   padding: 0 !important;
   overflow: auto;
   height: 680px !important;
+  .company{
+    gap: 20px;
+    button{
+      width: 80px;
+    }
+  }
 }
 //职位列表
 .position-page {
@@ -1364,9 +1442,18 @@ const getMoney: (data: string) => string = (data: string) => {
     }
   }
 }
-.companyIndustry{
+// .el-dialog_company{
+// }
+:deep(.el-dialog_company >.el-dialog__body){
+  height: 100px !important;
+}
+.company-industry{
   display: block;
   text-align: left !important;
+  width: 100px;
+}
+.company-name{
+  display: block;
   width: 100px;
 }
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
