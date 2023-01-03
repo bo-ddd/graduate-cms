@@ -147,8 +147,28 @@ const tab = function (num: number) {
   currentIndex.value = num;
 };
 //修改职位状态
-let setPositionStatus=()=>{
-
+let setPositionStatus=async(id:number,status:number)=>{
+ ElMessageBox.confirm(
+      `确认审核${status==1?'通过':'不通过'}？`,
+      "提示",
+      {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      }
+    ).then(async()=>{
+       let res=await usePosition.modifyStatus({
+        statusId:status,
+        positionId:id
+      });
+      if(res.code==200){
+      ElMessage({
+        type: "success",
+        message: "修改审核状态",
+      });
+        getPositionInfo();
+      }
+    })
 }
 //获取在招分页页面的数据
 let getPositionInfo = () => {
@@ -608,8 +628,8 @@ const getMoney: (data: string) => string = (data: string) => {
                     
                     <div class="refresh-info align-center">
                       <div v-if="item.positionStatus2=='0'">
-                      <el-button color="">通过</el-button>
-                      <el-button class="ml-10" @click="setPositionStatus" color="">不通过</el-button>
+                      <el-button @click="setPositionStatus(item.positionId,1)">通过</el-button>
+                      <el-button class="ml-10" @click="setPositionStatus(item.positionId,2)">不通过</el-button>
                       </div>
                       <div v-else>
                       <span v-if="item.positionStatus2=='1'" class="fs-14">已通过</span>
@@ -688,8 +708,8 @@ const getMoney: (data: string) => string = (data: string) => {
                         
                     <div class="refresh-info align-center">
                       <div v-if="item.positionStatus2=='0'">
-                      <el-button color="">通过</el-button>
-                      <el-button class="ml-10" @click="setPositionStatus" color="">不通过</el-button>
+                      <el-button @click="setPositionStatus(item.positionId,1)">通过</el-button>
+                      <el-button class="ml-10" @click="setPositionStatus(item.positionId,2)">不通过</el-button>
                       </div>
                       <div v-else>
                       <span v-if="item.positionStatus2=='1'" class="fs-14">已通过</span>
@@ -1173,6 +1193,9 @@ const getMoney: (data: string) => string = (data: string) => {
     overflow: hidden;
     width: 100%;
     background-color: #f6f7f9;
+        .fc-red{
+          color: red;
+        }
     
       .void-box {
         min-height: calc(100vh - 55px);
@@ -1217,9 +1240,6 @@ const getMoney: (data: string) => string = (data: string) => {
         }
         .cur-po:hover {
           color: #356ffa;
-        }
-        .fc-red{
-          color: red;
         }
       }
     }

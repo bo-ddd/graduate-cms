@@ -14,5 +14,8 @@ export default{
     getPosition: (params:any):any => {
         return axios.post('/system/getPosition', params, postConfig)
     },
+    modifyStatus: (params:any):any => {
+        return axios.post('/system/modifyStatus', params, postConfig)
+    },
     
 }
