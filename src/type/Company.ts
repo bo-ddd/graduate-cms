@@ -44,3 +44,8 @@ export interface CompanyDetail {
     userId: number,
     vipLevel:string,
 }
+
+export interface ModifyStatus{
+    statusId:number,
+    companyId:number
+}
