@@ -30,6 +30,7 @@
 import { ref,toRefs } from 'vue'
 import card from "@/components/card/index";
 import { useEnterpriseStore } from "@/stores/enterprise"
+import { ElMessage } from 'element-plus';
 let enterprise = useEnterpriseStore();
 let resumeList:any = ref([]);
 
