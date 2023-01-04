@@ -129,6 +129,7 @@ import {
 } from "vue";
 import card from "@/components/card/index";
 import { useEnterpriseStore } from "@/stores/enterprise";
+import { ElMessage,ElMessageBox } from "element-plus";
 let enterprise = useEnterpriseStore();
 let userName = ref("");
 let invitationStatus = ref(false);
