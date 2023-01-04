@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {ElMessageBox,ElMessage} from 'element-plus'
 import { useCompany } from "@/stores/company";
 import type { CompanyDetail, ModifyStatus, TabledateItem } from "@/type/Company";
 import type { Industry, Nature } from "@/type/CorporateManagement";
