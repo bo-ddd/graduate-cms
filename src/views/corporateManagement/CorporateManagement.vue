@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {ElMessageBox,ElMessage} from 'element-plus'
 import { useCompany } from "@/stores/company";
 import type { CompanyDetail, ModifyStatus, TabledateItem } from "@/type/Company";
 import type { Industry, Nature } from "@/type/CorporateManagement";
@@ -674,7 +675,7 @@ const getMoney: (data: string) => string = (data: string) => {
                         <span v-if="item.positionStatus2==2" class="tip-span warning">审核未通过</span>
                       </div>
                       <div class="info-list align-center">
-                        <div v-if="item.positionNature==0" class="money-num mr-15">{{item.positionMoney.split(',')[0].slice(0,1)+'-'+item.positionMoney.split(',')[1].slice(0,1)}}K</div>
+                        <div v-if="item.positionNature==0" class="money-num mr-15">{{item.positionMoney.split(',')[0].slice(0,-3)+'-'+item.positionMoney.split(',')[1].slice(0,-3)}}K</div>
                         <div v-else class="money-num mr-15">{{item.positionMonth.split(',').join('-')}}</div>
                         <div class="align-center fs-14">
                           <div>{{item.positionNature==0?'全职':'实习'}}</div>
@@ -699,11 +700,11 @@ const getMoney: (data: string) => string = (data: string) => {
                     </div>
                     
                     <div class="refresh-info align-center">
-                      <div v-if="item.positionStatus2=='0'">
+                      <div class="flex-bet" v-if="item.positionStatus2=='0'">
                       <el-button @click="setPositionStatus(item.positionId,1)">通过</el-button>
                       <el-button class="ml-10" @click="setPositionStatus(item.positionId,2)">不通过</el-button>
                       </div>
-                      <div v-else>
+                      <div class="w-100" v-else>
                       <span v-if="item.positionStatus2=='1'" class="fs-14">已通过</span>
                       <span v-if="item.positionStatus2=='2'" class="fs-14 fc-red">未通过</span>
                       </div>
@@ -753,7 +754,7 @@ const getMoney: (data: string) => string = (data: string) => {
                           <span v-if="item.positionStatus2==2" class="tip-span warning">审核未通过</span>
                         </div>
                         <div class="info-list align-center">
-                          <div v-if="item.positionNature==0" class="money-num mr-15">{{item.positionMoney.split(',')[0].slice(0,1)+'-'+item.positionMoney.split(',')[1].slice(0,1)}}K</div>
+                          <div v-if="item.positionNature==0" class="money-num mr-15">{{item.positionMoney.split(',')[0].slice(0,-3)+'-'+item.positionMoney.split(',')[1].slice(0,-3)}}K</div>
                           <div v-else class="money-num mr-15">{{item.positionMonth.split(',').join('-')}}</div>
                           <div class="align-center fs-14">
                             <div>{{item.positionNature==0?'全职':'实习'}}</div>
@@ -779,11 +780,11 @@ const getMoney: (data: string) => string = (data: string) => {
                       <div>
                         
                     <div class="refresh-info align-center">
-                      <div v-if="item.positionStatus2=='0'">
+                      <div class="flex-bet" v-if="item.positionStatus2=='0'">
                       <el-button @click="setPositionStatus(item.positionId,1)">通过</el-button>
-                      <el-button class="ml-10" @click="setPositionStatus(item.positionId,2)">不通过</el-button>
+                      <el-button class="" @click="setPositionStatus(item.positionId,2)">不通过</el-button>
                       </div>
-                      <div v-else>
+                      <div class="w-100" v-else>
                       <span v-if="item.positionStatus2=='1'" class="fs-14">已通过</span>
                       <span v-if="item.positionStatus2=='2'" class="fs-14 fc-red">未通过</span>
                       </div>
@@ -1298,6 +1299,23 @@ const getMoney: (data: string) => string = (data: string) => {
           border-radius: 2px;
         }
       }
+      .tab1{
+        
+        .refresh-info {
+          // gap: 0 12px;
+          width: 140px;
+        .w-100{
+          width: 100%;
+          text-align: center;
+        }
+        .flex-bet{
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          text-align: center;
+
+        }}
+      }
     .tab2 {
       background-color: white;
       overflow: hidden;
@@ -1312,7 +1330,20 @@ const getMoney: (data: string) => string = (data: string) => {
       }
 
       .refresh-info {
+        width: 170px;
         font-size: 14px;
+        .w-100{
+          
+          width: 100%;
+          text-align: center;
+        }
+        .flex-bet{
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          text-align: center;
+
+        }
         .cur-po {
           color: #515a6e;
         }
@@ -1396,7 +1427,20 @@ const getMoney: (data: string) => string = (data: string) => {
         }
 
         .refresh-info {
-          gap: 0 12px;
+          // gap: 0 12px;
+          
+        .w-100{
+          
+          width: 100%;
+          text-align: center;
+        }
+        .flex-bet{
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          text-align: center;
+
+        }
           :deep(.el-button) {
             font-size: 16px;
             box-sizing: border-box;
