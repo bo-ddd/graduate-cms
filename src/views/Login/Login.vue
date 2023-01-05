@@ -441,8 +441,8 @@ function removeFome() {
     padding: 30px;
     color: #0080ff;
     background-color: rgba(255, 255, 255, .6);
-    border-radius: 5px;
-    box-shadow: 0px 0px 100px 0PX rgb(255, 255, 255);
+    border-radius: 10px;
+    // box-shadow: 0px 0px 100px 0PX rgb(255, 255, 255);
 }
 
 :deep(.el-form-item__label) {
