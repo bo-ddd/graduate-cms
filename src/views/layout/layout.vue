@@ -53,12 +53,17 @@ let menuList = ref([
     },
 ]);
 
+
+const menuIndex = ref("1");
+menuIndex.value = menuList.value.find(item=> item.url == route.path)!.id + "";
+
 /**
  * 跳转路由
  * @param url 路径
  */
 let jump = (item: any) => {
     title.value = item.title;
+;
     if (route.path == item.url) return;
     router.push({ path: item.url });
 }
@@ -75,13 +80,12 @@ function getUrl(url: string): string {
             <el-header class="header flex-ja-center">{{ title }}</el-header>
             <el-container>
                 <el-aside width="180px">
-                    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu" default-active="1"
+                    <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu" :default-active=menuIndex
                         text-color="#fff">
                         <el-menu-item v-for="item in menuList" :index="`${item.id}`" @click="jump(item)">
                              <img :src="getUrl(item.icon)" alt="">&nbsp;&nbsp;&nbsp;
                              <span>{{ item.title }}</span>
                         </el-menu-item>
-
                     </el-menu>
                 </el-aside>
                 <el-main>
